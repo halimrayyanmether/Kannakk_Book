@@ -4,9 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Kannakk Book</title>
+  
+  <!-- Web App & Home Screen Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kannakk Book">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#000000">
+
+  <!-- App Icons for iOS & Android -->
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+  <link rel="shortcut icon" href="logo.png">
+
+  <!-- Inline Web App Manifest -->
+  <link rel="manifest" href='data:application/manifest+json;utf-8,{"name":"Kannakk Book","short_name":"Kannakk","start_url":".","display":"standalone","background_color":"%23000000","theme_color":"%23000000","icons":[{"src":"logo.png","sizes":"192x192 512x512","type":"image/png"}]}'>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,7 +117,7 @@
 
     <!-- Main Content Area -->
     <main class="flex-1 overflow-y-auto custom-scrollbar px-4 pt-3 pb-28 relative" id="mainScrollArea">
-      
+
       <!-- Empty State -->
       <div id="emptyState" class="hidden flex-col items-center justify-center min-h-[62vh] text-center px-6">
         <div class="w-16 h-12 rounded-xl border-[2.5px] border-[#48484a] flex flex-col justify-between p-2 mb-4">
@@ -116,7 +132,7 @@
 
       <!-- Active State with Year Comparison Chart -->
       <div id="activeState" class="space-y-6">
-        
+
         <!-- Chart Card -->
         <section class="bg-[#1c1c1e] rounded-3xl p-5 border border-[#2c2c2e] shadow-lg relative overflow-hidden">
           <div class="flex items-start justify-between mb-3">
@@ -183,7 +199,7 @@
 
     <!-- Analytics Scrollable Content -->
     <main class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-6 pb-12">
-      
+
       <!-- ITEM 1: Year Month-by-Month Chart + Infinite Year Stepper -->
       <section class="bg-[#1c1c1e] rounded-3xl p-5 border border-[#2c2c2e] shadow-lg">
         <div class="text-neutral-400 text-xs font-normal mb-1">Monthly Trend for Year</div>
@@ -438,7 +454,7 @@
   <!-- MORE OPTIONS SHEET / MENU -->
   <div id="moreActionSheet" class="fixed inset-0 z-50 bg-black/60 hidden flex-col justify-end p-4 backdrop-blur-sm">
     <div class="bg-[#1c1c1e] rounded-2xl border border-neutral-800 divide-y divide-neutral-800 overflow-hidden mb-3">
-      
+
       <!-- Currency Switcher Option -->
       <button id="menuCurrencySwitch" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -505,7 +521,7 @@
       </button>
     </div>
     <button id="closeMoreSheet" class="w-full py-3.5 bg-[#2c2c2e] text-white font-semibold rounded-2xl active:scale-98">Cancel</button>
-    
+
     <div class="text-center text-[11px] tracking-widest uppercase text-neutral-500 font-medium pt-3 pb-1">
       A &nbsp; Halim Rayyan &nbsp; Application
     </div>
@@ -916,7 +932,7 @@
             <circle cx="6" cy="15" r="1" fill="currentColor"/>
           </svg>
         `;
-        
+
         row.innerHTML = `
           <div class="flex items-center space-x-3.5 pointer-events-none">
             <div class="w-11 h-11 rounded-xl bg-[#2c2c2e] flex items-center justify-center shrink-0 relative">
