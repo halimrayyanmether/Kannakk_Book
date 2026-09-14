@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -28,7 +28,7 @@
           },
           fontFamily: {
             sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-            num: ['Space Grotesk', 'SF Pro Rounded', 'DIN Alternate', 'ui-monospace', 'monospace']
+            num: ['Sora', '-apple-system', 'system-ui', 'sans-serif']
           }
         }
       }
@@ -53,7 +53,7 @@
       -webkit-font-smoothing: antialiased;
     }
     .font-num {
-      font-family: 'Space Grotesk', 'SF Pro Rounded', 'DIN Alternate', ui-monospace, monospace;
+      font-family: 'Sora', -apple-system, system-ui, sans-serif;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.02em;
     }
@@ -145,7 +145,7 @@
           </div>
         </section>
 
-        <!-- Feature 1 & 7: Title on left side with 75% opacity and filter on the right -->
+        <!-- Transactions Header -->
         <section class="pt-6">
           <div class="flex items-center justify-between mb-4 px-1">
             <div class="text-white font-semibold text-base tracking-wide opacity-75">Transactions</div>
@@ -279,7 +279,7 @@
     </main>
   </div>
 
-  <!-- Feature 3: ALL TIME ANALYTICS SHEET WITH PIE CHART -->
+  <!-- ALL TIME ANALYTICS SHEET WITH PIE CHART -->
   <div id="allTimeModal" class="fixed inset-0 z-50 bg-black/70 hidden items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
     <div class="bg-[#1c1c1e] w-full sm:max-w-md rounded-t-[32px] sm:rounded-3xl border border-neutral-800 p-5 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
       <div class="flex items-center justify-between pb-3 border-b border-neutral-800">
@@ -298,7 +298,7 @@
         </div>
       </div>
 
-      <!-- Feature 3: Donut Pie Chart inside See All Time -->
+      <!-- Donut Pie Chart inside See All Time -->
       <div class="bg-[#242426] p-4 rounded-2xl border border-neutral-800 space-y-4">
         <div class="text-xs text-neutral-400 font-medium">All-Time Category Distribution</div>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-5 my-1">
@@ -315,9 +315,7 @@
 
       <div class="space-y-2">
         <div class="text-xs text-neutral-400 font-medium">All-Time Category Breakdown</div>
-        <div id="allTimeCategoryList" class="divide-y divide-neutral-800/80 rounded-2xl bg-[#242426] px-3 py-1 border border-neutral-800">
-          <!-- Populated by JS -->
-        </div>
+        <div id="allTimeCategoryList" class="divide-y divide-neutral-800/80 rounded-2xl bg-[#242426] px-3 py-1 border border-neutral-800"></div>
       </div>
 
       <button id="dismissAllTimeBtn" class="w-full py-3 bg-[#2c2c2e] text-white font-medium rounded-xl active:scale-95 transition-all">Done</button>
@@ -347,7 +345,7 @@
             <span class="text-white text-base font-normal">Amount</span>
             <span id="amountDisplay" class="text-base text-white font-normal flex items-center font-num">
               <span class="text-neutral-400 mr-0.5 font-sans" id="formCurrencyPrefix">₹</span>
-              <span id="amountValueText" class="font-num">0.00</span>
+              <span id="amountValueText" class="font-num font-semibold">0.00</span>
               <span class="w-[2px] h-5 bg-blue-500 ml-1 animate-pulse" id="amountCursor"></span>
             </span>
           </div>
@@ -419,22 +417,33 @@
   <!-- CURRENCY SELECTION MODAL -->
   <div id="currencyModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-6 backdrop-blur-[2px] transition-opacity">
     <div class="bg-[#1e1e20] w-full max-w-xs rounded-3xl overflow-hidden border border-neutral-700 shadow-2xl p-2 space-y-1">
-      <div class="px-3 py-2 text-xs font-semibold text-neutral-400 uppercase tracking-wider">Select Currency</div>
-      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="₹" data-name="INR (₹)">
-        <span>INR (₹)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      <div class="flex items-center justify-between px-3 py-2 border-b border-neutral-800">
+        <span class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Select Currency</span>
+        <button id="quickEditCurrencyBtn" class="text-xs text-blue-500 hover:text-blue-400 font-medium">Manage</button>
       </div>
-      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="$" data-name="USD ($)">
-        <span>USD ($)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      <div id="currencySelectionList" class="max-h-[60vh] overflow-y-auto custom-scrollbar space-y-1 pt-1"></div>
+    </div>
+  </div>
+
+  <!-- MANAGE CURRENCIES MODAL -->
+  <div id="manageCurrenciesModal" class="fixed inset-0 z-50 bg-black/70 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-[#1c1c1e] rounded-3xl w-full max-w-sm border border-neutral-800 p-5 space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-2 border-b border-neutral-800">
+        <h3 class="text-base font-bold text-white">Manage Currencies</h3>
+        <button id="closeManageCurrenciesBtn" class="w-7 h-7 rounded-full bg-[#2c2c2e] text-neutral-400 flex items-center justify-center">✕</button>
       </div>
-      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="€" data-name="EUR (€)">
-        <span>EUR (€)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      
+      <!-- New Currency Inputs -->
+      <div class="space-y-2">
+        <div class="flex space-x-2">
+          <input id="newCurrencySymbolInput" type="text" placeholder="Symbol (e.g. $, ₹)" class="w-24 bg-[#2c2c2e] text-white text-xs px-3 py-2 rounded-xl border border-neutral-700 focus:outline-none font-num">
+          <input id="newCurrencyNameInput" type="text" placeholder="Name (e.g. USD, INR)" class="flex-1 bg-[#2c2c2e] text-white text-xs px-3 py-2 rounded-xl border border-neutral-700 focus:outline-none">
+        </div>
+        <button id="addCurrencyBtn" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold">Add Currency</button>
       </div>
-      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="£" data-name="GBP (£)">
-        <span>GBP (£)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
-      </div>
-      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="AED " data-name="AED (AED)">
-        <span>AED</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
-      </div>
+
+      <!-- Currency Management List -->
+      <div id="currencyManagerList" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-neutral-800 space-y-1 pr-1"></div>
     </div>
   </div>
 
@@ -456,12 +465,12 @@
       <div class="flex items-center space-x-3">
         <button id="prevMonthBtn" class="p-1 text-neutral-300 hover:text-white active:scale-75">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
           </svg>
         </button>
         <button id="nextMonthBtn" class="p-1 text-neutral-300 hover:text-white active:scale-75">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
           </svg>
         </button>
       </div>
@@ -544,6 +553,20 @@
         </div>
       </button>
 
+      <!-- Manage Currencies Entry Option -->
+      <button id="menuManageCurrencies" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          <span>Manage Currencies</span>
+        </div>
+        <div class="flex items-center space-x-2 text-neutral-400 text-xs">
+          <span>Edit</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </button>
+
       <!-- Default Payment Tap-to-Change -->
       <button id="toggleDefaultPaymentRow" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -570,7 +593,7 @@
         </div>
         <div class="flex items-center space-x-2 text-neutral-400 text-xs">
           <span>Edit</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </div>
       </button>
 
@@ -640,6 +663,7 @@
     const USER_KEY = 'kannakk_book_username';
     const HAPTIC_KEY = 'kannakk_book_haptic_enabled';
     const CURRENCY_KEY = 'kannakk_book_currency';
+    const CURRENCIES_LIST_KEY = 'kannakk_book_currencies_list';
     const DEFAULT_PAYMENT_KEY = 'kannakk_book_default_payment';
     const CATEGORIES_KEY = 'kannakk_book_categories';
 
@@ -647,6 +671,14 @@
     const fullMonthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const defaultCategories = ["Shopping", "Groceries", "Food & Drinks", "Entertainment", "Transportation", "Personal", "Health", "Others"];
+
+    const defaultCurrencies = [
+      { symbol: "₹", name: "INR (₹)" },
+      { symbol: "$", name: "USD ($)" },
+      { symbol: "€", name: "EUR (€)" },
+      { symbol: "£", name: "GBP (£)" },
+      { symbol: "AED ", name: "AED (AED)" }
+    ];
 
     const categoryColors = {
       "Shopping": "#ff3b30",
@@ -672,6 +704,7 @@
     let state = {
       user: localStorage.getItem(USER_KEY) || "Halim Rayyan Mether",
       currency: localStorage.getItem(CURRENCY_KEY) || "₹",
+      currencies: JSON.parse(localStorage.getItem(CURRENCIES_LIST_KEY) || JSON.stringify(defaultCurrencies)),
       defaultPayment: localStorage.getItem(DEFAULT_PAYMENT_KEY) || "Bank",
       hapticEnabled: localStorage.getItem(HAPTIC_KEY) !== 'false',
       expenses: JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"),
@@ -699,6 +732,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.expenses));
       localStorage.setItem(USER_KEY, state.user);
       localStorage.setItem(CURRENCY_KEY, state.currency);
+      localStorage.setItem(CURRENCIES_LIST_KEY, JSON.stringify(state.currencies));
       localStorage.setItem(HAPTIC_KEY, state.hapticEnabled);
       localStorage.setItem(DEFAULT_PAYMENT_KEY, state.defaultPayment);
       localStorage.setItem(CATEGORIES_KEY, JSON.stringify(state.categories));
@@ -760,7 +794,6 @@
       return totals;
     }
 
-    // Feature 2: Chart begins with max scale 1000, increasing by steps of 500 when exceeded
     function renderHomeScrollableChart(targetYear) {
       const monthlyTotals = getYearMonthlyTotals(targetYear);
       const maxSpend = Math.max(...monthlyTotals, 0);
@@ -926,16 +959,12 @@
 
     function updateCurrencyLabels() {
       const curr = state.currency;
-      const labelMap = {
-        "₹": "INR (₹)",
-        "$": "USD ($)",
-        "€": "EUR (€)",
-        "£": "GBP (£)",
-        "AED ": "AED"
-      };
+      const found = state.currencies.find(c => c.symbol.trim() === curr.trim());
+      const labelText = found ? found.name : curr;
+
       const currLabelEl = document.getElementById('currentCurrencyLabel');
       if (currLabelEl) {
-        currLabelEl.textContent = labelMap[curr] || curr;
+        currLabelEl.textContent = labelText;
       }
       const prefixEl = document.getElementById('formCurrencyPrefix');
       if (prefixEl) {
@@ -1047,16 +1076,16 @@
         });
 
         const row = document.createElement('div');
-        row.className = "swipe-item-content relative z-10 bg-[#1c1c1e] p-4 flex items-center justify-between border border-[#2c2c2e] rounded-2xl";
+        row.className = "swipe-item-content relative z-10 bg-[#1c1c1e] p-3.5 sm:p-4 flex items-center justify-between border border-[#2c2c2e] rounded-2xl";
 
         const paymentIconSvg = isCash ? `
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
             <rect x="2" y="6" width="20" height="12" rx="2" stroke-width="2"/>
             <circle cx="12" cy="12" r="3" stroke-width="2"/>
             <path stroke-linecap="round" d="M6 12h.01M18 12h.01"/>
           </svg>
         ` : `
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
             <rect x="2" y="5" width="20" height="14" rx="3" stroke-width="2"/>
             <line x1="2" y1="10" x2="22" y2="10" stroke-width="2"/>
             <circle cx="6" cy="15" r="1" fill="currentColor"/>
@@ -1064,23 +1093,23 @@
         `;
         
         row.innerHTML = `
-          <div class="flex items-center space-x-3.5 pointer-events-none">
-            <div class="w-11 h-11 rounded-xl bg-[#2c2c2e] flex items-center justify-center shrink-0 relative">
-              <span class="w-2.5 h-2.5 rounded-full absolute top-2 right-2" style="background-color: ${categoryColor}"></span>
+          <div class="flex items-center space-x-3 min-w-0 pr-2 pointer-events-none">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#2c2c2e] flex items-center justify-center shrink-0 relative">
+              <span class="w-2.5 h-2.5 rounded-full absolute top-1.5 right-1.5" style="background-color: ${categoryColor}"></span>
               ${paymentIconSvg}
             </div>
-            <div>
-              <div class="text-white font-medium text-base leading-snug">${item.title || "Expense"}</div>
-              <div class="text-neutral-400 text-xs flex items-center space-x-1.5 mt-0.5">
-                <span class="font-num">${formatDateDisplay(item.date)}</span>
-                <span>•</span>
-                <span class="text-neutral-300 font-sans">${item.payment || "Bank"}</span>
-                <span>•</span>
-                <span class="text-neutral-400 font-sans text-[11px]">${item.category || "Others"}</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-white font-medium text-sm sm:text-base leading-snug truncate">${item.title || "Expense"}</div>
+              <div class="text-neutral-400 text-[11px] leading-tight flex items-center space-x-1 mt-0.5 truncate whitespace-nowrap overflow-hidden">
+                <span class="font-num shrink-0">${formatDateDisplay(item.date)}</span>
+                <span class="opacity-40">•</span>
+                <span class="text-neutral-300 font-sans shrink-0">${item.payment || "Bank"}</span>
+                <span class="opacity-40">•</span>
+                <span class="text-neutral-400 font-sans truncate">${item.category || "Others"}</span>
               </div>
             </div>
           </div>
-          <div class="text-white font-bold text-base font-num pointer-events-none">
+          <div class="text-white font-bold text-sm sm:text-base font-num whitespace-nowrap shrink-0 pointer-events-none">
             ${state.currency}${formatCurrency(item.amount)}
           </div>
         `;
@@ -1308,7 +1337,7 @@
     });
 
     /* -------------------------------------------------------------
-       Feature 3: ALL TIME STATS MODAL WITH DONUT PIE CHART
+       ALL TIME STATS MODAL WITH DONUT PIE CHART
     ------------------------------------------------------------- */
     const seeAllTimeBtn = document.getElementById('seeAllTimeBtn');
     const allTimeModal = document.getElementById('allTimeModal');
@@ -1363,7 +1392,6 @@
           const strokeDashoffset = -accumulatedAngle;
           const color = getCategoryColor(cat);
 
-          // Render circle segment for Pie Chart
           const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
           circle.setAttribute("cx", "50");
           circle.setAttribute("cy", "50");
@@ -1377,7 +1405,6 @@
 
           accumulatedAngle += strokeLength;
 
-          // Chart legend row
           const legRow = document.createElement('div');
           legRow.className = "flex items-center justify-between py-0.5";
           legRow.innerHTML = `
@@ -1391,7 +1418,6 @@
           `;
           pieLegend.appendChild(legRow);
 
-          // Detailed category breakdown row
           const row = document.createElement('div');
           row.className = "flex items-center justify-between py-2 text-xs";
           row.innerHTML = `
@@ -1540,6 +1566,157 @@
         catModalList.appendChild(item);
       });
     }
+
+    /* -------------------------------------------------------------
+       CURRENCY MANAGER LOGIC (Add / Delete / Choose)
+    ------------------------------------------------------------- */
+    const currencyModal = document.getElementById('currencyModal');
+    const menuCurrencySwitch = document.getElementById('menuCurrencySwitch');
+    const menuManageCurrencies = document.getElementById('menuManageCurrencies');
+    const manageCurrenciesModal = document.getElementById('manageCurrenciesModal');
+    const closeManageCurrenciesBtn = document.getElementById('closeManageCurrenciesBtn');
+    const quickEditCurrencyBtn = document.getElementById('quickEditCurrencyBtn');
+    const addCurrencyBtn = document.getElementById('addCurrencyBtn');
+    const newCurrencySymbolInput = document.getElementById('newCurrencySymbolInput');
+    const newCurrencyNameInput = document.getElementById('newCurrencyNameInput');
+    const currencyManagerList = document.getElementById('currencyManagerList');
+    const currencySelectionList = document.getElementById('currencySelectionList');
+
+    function renderCurrencySelector() {
+      currencySelectionList.innerHTML = "";
+      state.currencies.forEach(curr => {
+        const row = document.createElement('div');
+        const isSelected = curr.symbol.trim() === state.currency.trim();
+        row.className = "currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer";
+        row.setAttribute('data-value', curr.symbol);
+        row.innerHTML = `
+          <span>${curr.name}</span>
+          <span class="w-6 text-right check-icon ${isSelected ? '' : 'opacity-0'} font-bold text-blue-500">✓</span>
+        `;
+        currencySelectionList.appendChild(row);
+      });
+    }
+
+    function renderCurrencyManager() {
+      currencyManagerList.innerHTML = "";
+      state.currencies.forEach((curr, index) => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between py-2.5 text-sm text-white";
+        row.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="w-8 h-8 rounded-lg bg-[#2c2c2e] font-num flex items-center justify-center font-bold text-sm text-blue-400">${curr.symbol.trim()}</span>
+            <span class="font-medium">${curr.name}</span>
+          </div>
+          <button class="delete-curr-btn text-red-400 hover:text-red-500 text-xs px-2.5 py-1 rounded-lg bg-[#2c2c2e] active:scale-95 transition-transform" data-idx="${index}">Delete</button>
+        `;
+        currencyManagerList.appendChild(row);
+      });
+
+      currencyManagerList.querySelectorAll('.delete-curr-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          vibrate();
+          const idx = parseInt(btn.getAttribute('data-idx'));
+          if (state.currencies.length <= 1) {
+            alert("You must keep at least one currency.");
+            return;
+          }
+          const removed = state.currencies.splice(idx, 1)[0];
+          if (state.currency.trim() === removed.symbol.trim()) {
+            state.currency = state.currencies[0].symbol;
+          }
+          saveState();
+          renderCurrencyManager();
+          renderCurrencySelector();
+          renderDashboard();
+        });
+      });
+    }
+
+    menuCurrencySwitch.addEventListener('click', () => {
+      vibrate();
+      renderCurrencySelector();
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+      currencyModal.classList.remove('hidden');
+      currencyModal.classList.add('flex');
+    });
+
+    quickEditCurrencyBtn.addEventListener('click', () => {
+      vibrate();
+      currencyModal.classList.add('hidden');
+      currencyModal.classList.remove('flex');
+      renderCurrencyManager();
+      manageCurrenciesModal.classList.remove('hidden');
+      manageCurrenciesModal.classList.add('flex');
+    });
+
+    menuManageCurrencies.addEventListener('click', () => {
+      vibrate();
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+      renderCurrencyManager();
+      manageCurrenciesModal.classList.remove('hidden');
+      manageCurrenciesModal.classList.add('flex');
+    });
+
+    closeManageCurrenciesBtn.addEventListener('click', () => {
+      vibrate();
+      manageCurrenciesModal.classList.add('hidden');
+      manageCurrenciesModal.classList.remove('flex');
+    });
+
+    addCurrencyBtn.addEventListener('click', () => {
+      const sym = newCurrencySymbolInput.value.trim();
+      const name = newCurrencyNameInput.value.trim();
+      if (!sym || !name) {
+        alert("Please provide both a symbol and a name.");
+        return;
+      }
+      if (state.currencies.some(c => c.symbol.trim() === sym)) {
+        alert("Currency symbol already exists.");
+        return;
+      }
+      vibrate();
+      state.currencies.push({ symbol: sym, name: `${name} (${sym})` });
+      newCurrencySymbolInput.value = "";
+      newCurrencyNameInput.value = "";
+      saveState();
+      renderCurrencyManager();
+      renderCurrencySelector();
+      renderDashboard();
+    });
+
+    currencyModal.addEventListener('click', (e) => {
+      const item = e.target.closest('.currency-item');
+      if (item) {
+        vibrate();
+        state.currency = item.getAttribute('data-value');
+        saveState();
+        renderDashboard();
+        if (!analyticsView.classList.contains('translate-x-full')) {
+          renderAnalyticsScreen();
+        }
+        currencyModal.classList.add('hidden');
+        currencyModal.classList.remove('flex');
+      }
+    });
+
+    /* -------------------------------------------------------------
+       DEFAULT PAYMENT MODE TOGGLE
+    ------------------------------------------------------------- */
+    const toggleDefaultPaymentRow = document.getElementById('toggleDefaultPaymentRow');
+    const defaultPaymentValueLabel = document.getElementById('defaultPaymentValueLabel');
+
+    function syncDefaultPaymentUI() {
+      defaultPaymentValueLabel.textContent = state.defaultPayment;
+    }
+
+    toggleDefaultPaymentRow.addEventListener('click', () => {
+      vibrate();
+      state.defaultPayment = state.defaultPayment === 'Bank' ? 'Cash' : 'Bank';
+      saveState();
+      syncDefaultPaymentUI();
+    });
 
     /* -------------------------------------------------------------
        EXPENSE FORM & MODAL LOGIC
@@ -1746,61 +1923,6 @@
         updateFormElements();
       }
       paymentModal.classList.add('hidden');
-    });
-
-    /* -------------------------------------------------------------
-       CURRENCY SELECTION LOGIC
-    ------------------------------------------------------------- */
-    const currencyModal = document.getElementById('currencyModal');
-    const menuCurrencySwitch = document.getElementById('menuCurrencySwitch');
-
-    menuCurrencySwitch.addEventListener('click', () => {
-      vibrate();
-      document.querySelectorAll('.currency-item').forEach(item => {
-        const val = item.getAttribute('data-value');
-        const icon = item.querySelector('.check-icon');
-        if (val === state.currency) {
-          icon.classList.remove('opacity-0');
-        } else {
-          icon.classList.add('opacity-0');
-        }
-      });
-      moreActionSheet.classList.add('hidden');
-      moreActionSheet.classList.remove('flex');
-      currencyModal.classList.remove('hidden');
-      currencyModal.classList.add('flex');
-    });
-
-    currencyModal.addEventListener('click', (e) => {
-      const item = e.target.closest('.currency-item');
-      if (item) {
-        vibrate();
-        state.currency = item.getAttribute('data-value');
-        saveState();
-        renderDashboard();
-        if (!analyticsView.classList.contains('translate-x-full')) {
-          renderAnalyticsScreen();
-        }
-      }
-      currencyModal.classList.add('hidden');
-      currencyModal.classList.remove('flex');
-    });
-
-    /* -------------------------------------------------------------
-       DEFAULT PAYMENT MODE TOGGLE
-    ------------------------------------------------------------- */
-    const toggleDefaultPaymentRow = document.getElementById('toggleDefaultPaymentRow');
-    const defaultPaymentValueLabel = document.getElementById('defaultPaymentValueLabel');
-
-    function syncDefaultPaymentUI() {
-      defaultPaymentValueLabel.textContent = state.defaultPayment;
-    }
-
-    toggleDefaultPaymentRow.addEventListener('click', () => {
-      vibrate();
-      state.defaultPayment = state.defaultPayment === 'Bank' ? 'Cash' : 'Bank';
-      saveState();
-      syncDefaultPaymentUI();
     });
 
     /* -------------------------------------------------------------
