@@ -451,6 +451,22 @@
         </div>
       </button>
 
+      <!-- Default Payment Mode Option -->
+      <div class="w-full py-3 px-4 flex items-center justify-between text-white text-sm font-medium">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="5" width="20" height="14" rx="3" stroke-width="2"/>
+            <line x1="2" y1="10" x2="22" y2="10" stroke-width="2"/>
+            <circle cx="6" cy="15" r="1" fill="currentColor"/>
+          </svg>
+          <span>Default Payment</span>
+        </div>
+        <div class="flex items-center space-x-2 bg-[#2c2c2e] p-1 rounded-xl border border-neutral-700">
+          <button id="defaultPayBankBtn" type="button" class="px-2.5 py-1 text-xs rounded-lg font-medium transition-colors bg-white text-black font-semibold">Bank</button>
+          <button id="defaultPayCashBtn" type="button" class="px-2.5 py-1 text-xs rounded-lg font-medium transition-colors text-neutral-400 hover:text-white">Cash</button>
+        </div>
+      </div>
+
       <!-- Haptic Feedback Toggle Switch -->
       <div class="w-full py-3 px-4 flex items-center justify-between text-white text-sm font-medium">
         <div class="flex items-center space-x-3">
@@ -466,7 +482,7 @@
       <button id="menuExportCsv" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>Export as CSV (Excel)</span>
+          <span>Export Expenses (CSV)</span>
         </div>
         <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
       </button>
@@ -517,6 +533,7 @@
     const USER_KEY = 'kannakk_book_username';
     const HAPTIC_KEY = 'kannakk_book_haptic_enabled';
     const CURRENCY_KEY = 'kannakk_book_currency';
+    const DEFAULT_PAYMENT_KEY = 'kannakk_book_default_payment';
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const fullMonthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -537,6 +554,7 @@
     let state = {
       user: localStorage.getItem(USER_KEY) || "Halim Rayyan Mether",
       currency: localStorage.getItem(CURRENCY_KEY) || "₹",
+      defaultPayment: localStorage.getItem(DEFAULT_PAYMENT_KEY) || "Bank",
       hapticEnabled: localStorage.getItem(HAPTIC_KEY) !== 'false',
       expenses: JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"),
       editingId: null,
@@ -544,7 +562,7 @@
         title: "",
         rawAmount: "",
         category: "Shopping",
-        payment: "Bank",
+        payment: localStorage.getItem(DEFAULT_PAYMENT_KEY) || "Bank",
         date: new Date()
       },
       calendarView: {
@@ -562,6 +580,7 @@
       localStorage.setItem(USER_KEY, state.user);
       localStorage.setItem(CURRENCY_KEY, state.currency);
       localStorage.setItem(HAPTIC_KEY, state.hapticEnabled);
+      localStorage.setItem(DEFAULT_PAYMENT_KEY, state.defaultPayment);
     }
 
     function formatCurrency(amount) {
@@ -1172,7 +1191,7 @@
       state.form.title = "";
       state.form.rawAmount = "";
       state.form.category = "Shopping";
-      state.form.payment = "Bank";
+      state.form.payment = state.defaultPayment || "Bank";
       state.form.date = new Date();
 
       document.getElementById('modalHeaderTitle').textContent = "New Expense";
@@ -1393,6 +1412,36 @@
     });
 
     /* -------------------------------------------------------------
+       DEFAULT PAYMENT MODE TOGGLE LOGIC
+    ------------------------------------------------------------- */
+    const defaultPayBankBtn = document.getElementById('defaultPayBankBtn');
+    const defaultPayCashBtn = document.getElementById('defaultPayCashBtn');
+
+    function syncDefaultPaymentUI() {
+      if (state.defaultPayment === 'Cash') {
+        defaultPayCashBtn.className = "px-2.5 py-1 text-xs rounded-lg font-medium transition-colors bg-white text-black font-semibold";
+        defaultPayBankBtn.className = "px-2.5 py-1 text-xs rounded-lg font-medium transition-colors text-neutral-400 hover:text-white";
+      } else {
+        defaultPayBankBtn.className = "px-2.5 py-1 text-xs rounded-lg font-medium transition-colors bg-white text-black font-semibold";
+        defaultPayCashBtn.className = "px-2.5 py-1 text-xs rounded-lg font-medium transition-colors text-neutral-400 hover:text-white";
+      }
+    }
+
+    defaultPayBankBtn.addEventListener('click', () => {
+      vibrate();
+      state.defaultPayment = 'Bank';
+      saveState();
+      syncDefaultPaymentUI();
+    });
+
+    defaultPayCashBtn.addEventListener('click', () => {
+      vibrate();
+      state.defaultPayment = 'Cash';
+      saveState();
+      syncDefaultPaymentUI();
+    });
+
+    /* -------------------------------------------------------------
        HAPTIC FEEDBACK TOGGLE LOGIC
     ------------------------------------------------------------- */
     const hapticToggleBtn = document.getElementById('hapticToggleBtn');
@@ -1601,6 +1650,7 @@
     moreMenuBtn.addEventListener('click', () => {
       vibrate();
       syncHapticToggleUI();
+      syncDefaultPaymentUI();
       moreActionSheet.classList.remove('hidden');
       moreActionSheet.classList.add('flex');
     });
@@ -1674,7 +1724,17 @@
     window.addEventListener('DOMContentLoaded', () => {
       initializeSeedData();
       syncHapticToggleUI();
+      syncDefaultPaymentUI();
       renderDashboard();
+
+      // Check for ?add=true query parameter to trigger expense form
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('add') === 'true') {
+        openNewExpenseModal();
+        // Clean URL so refreshing does not continuously re-trigger
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
     });
   </script>
 </body>
