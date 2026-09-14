@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Kannakk Book</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#000000">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            iosDark: '#000000',
+            iosCard: '#1c1c1e',
+            iosCardSecondary: '#2c2c2e',
+            iosCardBorder: '#38383a',
+            iosSubtext: '#8e8e93',
+            iosKeypad: '#242426',
+            iosKeypadPress: '#3a3a3c',
+            iosBlue: '#0a84ff',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+            num: ['Space Grotesk', 'SF Pro Rounded', 'DIN Alternate', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    input, textarea {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      overscroll-behavior-y: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-num {
+      font-family: 'Space Grotesk', 'SF Pro Rounded', 'DIN Alternate', ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .sheet-transition {
+      transition: transform 0.32s cubic-bezier(0.32, 1, 0.23, 1), opacity 0.25s ease;
+    }
+    .view-slide {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .active-key:active {
+      background-color: #48484a !important;
+      transform: scale(0.96);
+    }
+    .swipe-item-content {
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      will-change: transform;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col font-sans bg-black text-white antialiased selection:bg-neutral-700">
+
+  <!-- =============================================================
+       HOME VIEW
+       ============================================================= -->
+  <div id="homeView" class="h-full w-full flex flex-col relative view-slide">
+    <!-- Top Header -->
+    <header class="w-full pt-3 px-4 pb-2 flex items-center justify-between shrink-0 z-10">
+      <button id="profilePillBtn" class="flex items-center bg-[#1c1c1e] hover:bg-[#2c2c2e] active:scale-95 transition-all text-white font-medium text-sm px-4 py-2 rounded-full border border-neutral-800">
+        <span id="displayUserName" class="max-w-[200px] truncate">Halim Rayyan Mether</span>
+      </button>
+
+      <button id="moreMenuBtn" aria-label="More options" class="w-10 h-10 rounded-full bg-[#1c1c1e] hover:bg-[#2c2c2e] active:scale-90 transition-all flex items-center justify-center text-white border border-neutral-800">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar px-4 pt-3 pb-28 relative" id="mainScrollArea">
+      
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden flex-col items-center justify-center min-h-[62vh] text-center px-6">
+        <div class="w-16 h-12 rounded-xl border-[2.5px] border-[#48484a] flex flex-col justify-between p-2 mb-4">
+          <div class="w-3.5 h-2.5 bg-[#48484a] rounded-sm"></div>
+          <div class="w-full h-1 bg-[#48484a] rounded-full"></div>
+        </div>
+        <h2 class="text-xl font-bold tracking-tight text-white mb-1.5">No Expenses</h2>
+        <p class="text-neutral-400 text-sm max-w-[220px] leading-relaxed">
+          Add your first expense by tapping the + button
+        </p>
+      </div>
+
+      <!-- Active State with Year Comparison Chart -->
+      <div id="activeState" class="space-y-6">
+        
+        <!-- Chart Card -->
+        <section class="bg-[#1c1c1e] rounded-3xl p-5 border border-[#2c2c2e] shadow-lg relative overflow-hidden">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <div class="text-neutral-400 text-sm font-normal">Spend this Month</div>
+              <div class="text-3xl sm:text-4xl font-bold font-num tracking-tight text-white mt-0.5" id="homeMonthSpentTotal">₹0.00</div>
+            </div>
+            <button id="openAnalyticsBtn" aria-label="Detailed Charts" class="w-9 h-9 rounded-full bg-[#2c2c2e] hover:bg-[#3a3a3c] active:scale-90 transition-all flex items-center justify-center text-white border border-neutral-700/60 shadow-sm shrink-0 mt-0.5">
+              <svg class="w-4 h-4 text-neutral-200" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="relative w-full h-52 pt-1 mt-1 flex">
+            <div id="homeChartScrollWrapper" class="flex-1 overflow-x-auto overflow-y-hidden custom-scrollbar relative pb-7 pr-2 scroll-smooth" style="-webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;">
+              <div id="homeGridLines" class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-7 w-[300%]"></div>
+              <div id="homeBarsContainer" class="h-full flex items-end w-[300%]"></div>
+              <div id="homeXAxisLabels" class="absolute bottom-0 inset-x-0 w-[300%] flex text-xs text-neutral-400 font-medium"></div>
+            </div>
+
+            <div id="homeYAxisLabels" class="w-12 h-full flex flex-col justify-between items-end pb-7 pl-1 text-[10px] text-neutral-500 font-num pointer-events-none shrink-0 border-l border-neutral-800/40"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-neutral-500 pt-1 px-1 border-t border-neutral-800/60">
+            <span>Swipe horizontally to view all months</span>
+          </div>
+        </section>
+
+        <!-- All transactions recorded under 'Transactions' -->
+        <section>
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="text-neutral-400 font-medium text-sm">Transactions</div>
+          </div>
+          <div id="expensesList" class="space-y-2.5">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Floating Add Button -->
+    <button id="openNewExpenseBtn" aria-label="Add Expense" class="fixed right-6 bottom-7 z-20 w-16 h-16 rounded-full bg-white text-black flex items-center justify-center shadow-2xl active:scale-90 transition-transform duration-150">
+      <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- =============================================================
+       DETAILED ANALYTICS SCREEN
+       ============================================================= -->
+  <div id="analyticsView" class="fixed inset-0 bg-black z-30 flex flex-col transform translate-x-full view-slide overflow-hidden">
+    <header class="w-full pt-10 sm:pt-12 px-4 pb-3 flex items-center justify-between shrink-0 border-b border-neutral-800/80 bg-black/90 backdrop-blur-md">
+      <button id="backToHomeBtn" class="flex items-center space-x-1 px-3 py-1.5 rounded-full bg-[#1c1c1e] text-white text-sm font-medium border border-neutral-800 active:scale-95 transition-transform">
+        <svg class="w-4 h-4 text-neutral-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span>Home</span>
+      </button>
+      <h2 class="text-base font-semibold text-white">Expense Details</h2>
+      <div class="w-16"></div>
+    </header>
+
+    <!-- Analytics Scrollable Content -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-6 pb-12">
+      
+      <!-- ITEM 1: Year Month-by-Month Chart + Infinite Year Stepper -->
+      <section class="bg-[#1c1c1e] rounded-3xl p-5 border border-[#2c2c2e] shadow-lg">
+        <div class="text-neutral-400 text-xs font-normal mb-1">Monthly Trend for Year</div>
+        <div class="flex items-baseline justify-between mb-2">
+          <div class="text-2xl font-bold font-num text-white" id="analyticsYearTotal">₹0.00</div>
+          <div class="text-xs px-2.5 py-1 rounded-full bg-[#2c2c2e] text-neutral-300 font-num" id="analyticsActiveYearBadge">2026</div>
+        </div>
+
+        <div class="relative w-full h-48 pt-2">
+          <div id="analyticsGridLines" class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-7"></div>
+          <div id="analyticsBarsContainer" class="absolute inset-0 pb-7 pr-12 pl-1 flex items-end justify-between gap-1 overflow-x-auto custom-scrollbar"></div>
+          <div class="absolute bottom-0 inset-x-0 pr-12 pl-1 flex justify-between text-[9px] sm:text-[10px] text-neutral-400 font-medium">
+            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+          </div>
+        </div>
+
+        <!-- Year Stepper -->
+        <div class="mt-5 pt-4 border-t border-neutral-800 flex items-center justify-between">
+          <span class="text-xs text-neutral-400 font-medium">Select Year</span>
+          <div class="flex items-center space-x-3 bg-[#2c2c2e] px-3 py-1.5 rounded-full border border-neutral-700">
+            <button id="prevYearBtn" aria-label="Previous Year" class="w-7 h-7 rounded-full bg-[#3a3a3c] hover:bg-neutral-600 active:scale-90 transition-transform flex items-center justify-center text-white">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <span id="currentYearDisplay" class="text-sm font-bold font-num text-white px-2 min-w-[52px] text-center">2026</span>
+            <button id="nextYearBtn" aria-label="Next Year" class="w-7 h-7 rounded-full bg-[#3a3a3c] hover:bg-neutral-600 active:scale-90 transition-transform flex items-center justify-center text-white">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ITEM 2: Category Breakdown Pie Chart + Stepper Month Selector -->
+      <section class="bg-[#1c1c1e] rounded-3xl p-5 border border-[#2c2c2e] shadow-lg">
+        <div class="flex items-center justify-between mb-1">
+          <div>
+            <div class="text-neutral-400 text-xs font-normal">Category Breakdown</div>
+            <div class="text-xl font-bold font-num text-white" id="pieChartMonthTotal">₹0.00</div>
+          </div>
+          <div class="text-xs text-neutral-400 font-medium px-2.5 py-1 bg-[#2c2c2e] rounded-full" id="pieChartSelectedPeriod">Sep 2026</div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 my-4">
+          <div class="relative w-40 h-40 flex items-center justify-center shrink-0">
+            <svg id="categoryPieSvg" viewBox="0 0 100 100" class="w-full h-full -rotate-90 transform"></svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+              <span class="text-[10px] text-neutral-400 uppercase tracking-widest">Total</span>
+              <span class="text-xs font-bold font-num text-white px-2 truncate max-w-[90px]" id="donutCenterAmount">₹0</span>
+            </div>
+          </div>
+
+          <div id="pieLegendContainer" class="flex-1 w-full space-y-1.5 text-xs"></div>
+        </div>
+
+        <!-- Month Stepper Selector Styled Like the Year Stepper -->
+        <div class="mt-4 pt-4 border-t border-neutral-800 flex items-center justify-between">
+          <span class="text-xs text-neutral-400 font-medium">Select Month</span>
+          <div class="flex items-center space-x-3 bg-[#2c2c2e] px-3 py-1.5 rounded-full border border-neutral-700">
+            <button id="prevMonthStepperBtn" aria-label="Previous Month" class="w-7 h-7 rounded-full bg-[#3a3a3c] hover:bg-neutral-600 active:scale-90 transition-transform flex items-center justify-center text-white">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <span id="currentMonthDisplay" class="text-sm font-bold font-sans text-white px-2 min-w-[52px] text-center">Sep</span>
+            <button id="nextMonthStepperBtn" aria-label="Next Month" class="w-7 h-7 rounded-full bg-[#3a3a3c] hover:bg-neutral-600 active:scale-90 transition-transform flex items-center justify-center text-white">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =============================================================
+       NEW / EDIT EXPENSE MODAL SHEET
+       ============================================================= -->
+  <div id="expenseModalBackdrop" class="fixed inset-0 bg-black/60 z-30 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm"></div>
+
+  <div id="expenseModalSheet" class="fixed inset-x-0 bottom-0 top-10 z-40 bg-[#121212] rounded-t-[32px] transform translate-y-full sheet-transition flex flex-col overflow-hidden border-t border-neutral-800 max-w-lg mx-auto">
+    <div class="px-5 py-4 flex items-center justify-between border-b border-neutral-800/80 shrink-0">
+      <button id="modalCancelBtn" class="text-white text-base px-3.5 py-1.5 rounded-full bg-[#242426] hover:bg-[#343436] active:scale-95 transition-all">Cancel</button>
+      <h3 id="modalHeaderTitle" class="text-white font-semibold text-base">New Expense</h3>
+      <button id="modalSaveBtn" class="text-neutral-500 font-semibold text-base px-4 py-1.5 rounded-full bg-[#242426] transition-all disabled:opacity-40" disabled>Save</button>
+    </div>
+
+    <div class="p-4 flex-1 overflow-y-auto custom-scrollbar flex flex-col justify-between">
+      <div>
+        <div class="bg-[#1c1c1e] rounded-2xl border border-neutral-800 overflow-hidden divide-y divide-neutral-800/80">
+          <div class="p-4 flex items-center">
+            <input id="expenseTitleInput" type="text" placeholder="Title" class="w-full bg-transparent text-white text-base focus:outline-none placeholder-neutral-500">
+          </div>
+
+          <div id="amountRow" class="p-4 flex items-center justify-between cursor-pointer active:bg-neutral-800/40 transition-colors">
+            <span class="text-white text-base font-normal">Amount</span>
+            <span id="amountDisplay" class="text-base text-white font-normal flex items-center font-num">
+              <span class="text-neutral-400 mr-0.5 font-sans" id="formCurrencyPrefix">₹</span>
+              <span id="amountValueText" class="font-num">0.00</span>
+              <span class="w-[2px] h-5 bg-blue-500 ml-1 animate-pulse" id="amountCursor"></span>
+            </span>
+          </div>
+
+          <div id="categoryRow" class="p-4 flex items-center justify-between cursor-pointer active:bg-neutral-800/40 transition-colors relative">
+            <span class="text-white text-base font-normal">Category</span>
+            <div class="flex items-center space-x-1.5 text-neutral-300">
+              <span id="categoryDisplayText" class="text-sm">Shopping</span>
+              <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 15l5 5 5-5M7 9l5-5 5 5"/>
+              </svg>
+            </div>
+          </div>
+
+          <div id="paymentRow" class="p-4 flex items-center justify-between cursor-pointer active:bg-neutral-800/40 transition-colors relative">
+            <span class="text-white text-base font-normal">Payment</span>
+            <div class="flex items-center space-x-1.5 text-neutral-300">
+              <span id="paymentDisplayText" class="text-sm">Bank</span>
+              <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 15l5 5 5-5M7 9l5-5 5 5"/>
+              </svg>
+            </div>
+          </div>
+
+          <div id="dateRow" class="p-4 flex items-center justify-between cursor-pointer active:bg-neutral-800/40 transition-colors">
+            <span class="text-white text-base font-normal">Date</span>
+            <div class="px-3.5 py-1.5 bg-[#2c2c2e] rounded-xl text-neutral-200 text-sm font-medium font-num" id="dateDisplayText"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clean Keypad -->
+      <div id="numericKeypad" class="pt-4 pb-2 select-none">
+        <div class="grid grid-cols-3 gap-2.5 max-w-sm mx-auto font-num">
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="1"><span>1</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="2"><span>2</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="3"><span>3</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="4"><span>4</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="5"><span>5</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="6"><span>6</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="7"><span>7</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="8"><span>8</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="9"><span>9</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="."><span class="text-3xl leading-none -mt-1.5">•</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-2xl font-bold py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="0"><span>0</span></button>
+          <button class="keypad-key active-key bg-[#242426] text-white text-xl py-3 rounded-2xl flex items-center justify-center h-14 transition-all shadow-sm" data-key="BACKSPACE">
+            <svg class="w-6 h-6 text-neutral-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414A2 2 0 0110.828 5H20a2 2 0 012 2v10a2 2 0 01-2 2h-9.172a2 2 0 01-1.414-.586L3 12z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY SELECTION MODAL -->
+  <div id="categoryModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] hidden flex items-center justify-center p-6 transition-opacity">
+    <div class="bg-[#1e1e20] w-full max-w-xs rounded-3xl overflow-hidden border border-neutral-700 shadow-2xl p-1.5 space-y-0.5">
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Shopping"><span class="w-6 check-icon opacity-0">✓</span><span>Shopping</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Groceries"><span class="w-6 check-icon opacity-0">✓</span><span>Groceries</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Food & Drinks"><span class="w-6 check-icon opacity-0">✓</span><span>Food & Drinks</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Entertainment"><span class="w-6 check-icon opacity-0">✓</span><span>Entertainment</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Transportation"><span class="w-6 check-icon opacity-0">✓</span><span>Transportation</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Personal"><span class="w-6 check-icon opacity-0">✓</span><span>Personal</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Health"><span class="w-6 check-icon opacity-0">✓</span><span>Health</span></div>
+      <div class="category-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Others"><span class="w-6 check-icon opacity-0">✓</span><span>Others</span></div>
+    </div>
+  </div>
+
+  <!-- PAYMENT SELECTION MODAL -->
+  <div id="paymentModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] hidden flex items-center justify-center p-6 transition-opacity">
+    <div class="bg-[#1e1e20] w-full max-w-xs rounded-3xl overflow-hidden border border-neutral-700 shadow-2xl p-1.5 space-y-0.5">
+      <div class="payment-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Cash"><span class="w-6 check-icon opacity-0">✓</span><span>Cash</span></div>
+      <div class="payment-item flex items-center px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="Bank"><span class="w-6 check-icon text-white">✓</span><span>Bank</span></div>
+    </div>
+  </div>
+
+  <!-- CURRENCY SELECTION MODAL -->
+  <div id="currencyModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-6 backdrop-blur-[2px] transition-opacity">
+    <div class="bg-[#1e1e20] w-full max-w-xs rounded-3xl overflow-hidden border border-neutral-700 shadow-2xl p-2 space-y-1">
+      <div class="px-3 py-2 text-xs font-semibold text-neutral-400 uppercase tracking-wider">Select Currency</div>
+      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="₹" data-name="INR (₹)">
+        <span>INR (₹)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      </div>
+      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="$" data-name="USD ($)">
+        <span>USD ($)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      </div>
+      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="€" data-name="EUR (€)">
+        <span>EUR (€)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      </div>
+      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="£" data-name="GBP (£)">
+        <span>GBP (£)</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      </div>
+      <div class="currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer" data-value="AED " data-name="AED (AED)">
+        <span>AED</span><span class="w-6 text-right check-icon opacity-0 font-bold">✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR PICKER MODAL SHEET -->
+  <div id="dateModalSheet" class="fixed inset-x-0 bottom-0 z-50 bg-[#1c1c1e] rounded-t-3xl border-t border-neutral-700 p-5 transform translate-y-full sheet-transition max-w-md mx-auto">
+    <div class="flex items-center justify-between mb-4">
+      <button id="closeCalendarBtn" class="w-8 h-8 rounded-full bg-[#2c2c2e] text-neutral-400 flex items-center justify-center active:scale-90">✕</button>
+      <div class="text-white font-semibold text-base">Date</div>
+      <div class="w-8"></div>
+    </div>
+
+    <div class="flex items-center justify-between mb-4 px-2">
+      <div class="flex items-center space-x-1 font-semibold text-white text-base">
+        <span id="calMonthYearLabel">September 2026</span>
+        <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button id="prevMonthBtn" class="p-1 text-neutral-300 hover:text-white active:scale-75">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button id="nextMonthBtn" class="p-1 text-neutral-300 hover:text-white active:scale-75">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-7 text-center text-[10px] font-semibold text-neutral-500 tracking-wider mb-2">
+      <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+    </div>
+
+    <div id="calendarDaysGrid" class="grid grid-cols-7 gap-y-2 text-center text-sm font-num font-medium"></div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div id="profileModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-[#1c1c1e] rounded-3xl w-full max-w-sm border border-neutral-800 p-6 space-y-4">
+      <h3 class="text-lg font-bold text-white">Profile Name</h3>
+      <p class="text-xs text-neutral-400">Change your account display name shown in the top bar.</p>
+      <input id="userNameInput" type="text" class="w-full bg-[#2c2c2e] text-white px-4 py-3 rounded-xl border border-neutral-700 focus:outline-none focus:border-blue-500">
+      <div class="flex space-x-2 pt-2">
+        <button id="closeProfileModal" class="flex-1 py-2.5 rounded-xl bg-[#2c2c2e] text-white font-medium text-sm">Cancel</button>
+        <button id="saveProfileBtn" class="flex-1 py-2.5 rounded-xl bg-white text-black font-semibold text-sm">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MORE OPTIONS SHEET / MENU -->
+  <div id="moreActionSheet" class="fixed inset-0 z-50 bg-black/60 hidden flex-col justify-end p-4 backdrop-blur-sm">
+    <div class="bg-[#1c1c1e] rounded-2xl border border-neutral-800 divide-y divide-neutral-800 overflow-hidden mb-3">
+      
+      <!-- Currency Switcher Option -->
+      <button id="menuCurrencySwitch" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Currency</span>
+        </div>
+        <div class="flex items-center space-x-2 text-neutral-400 text-xs">
+          <span id="currentCurrencyLabel" class="font-sans font-semibold">INR (₹)</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </button>
+
+      <!-- Haptic Feedback Toggle Switch -->
+      <div class="w-full py-3 px-4 flex items-center justify-between text-white text-sm font-medium">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          <span>Haptic Feedback</span>
+        </div>
+        <button id="hapticToggleBtn" type="button" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out bg-blue-600 focus:outline-none">
+          <span id="hapticToggleThumb" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+        </button>
+      </div>
+
+      <!-- Export CSV -->
+      <button id="menuExportCsv" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Export as CSV (Excel)</span>
+        </div>
+        <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      </button>
+
+      <!-- Export JSON -->
+      <button id="menuExportData" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2"/></svg>
+          <span>Export Expenses (JSON)</span>
+        </div>
+        <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      </button>
+
+      <!-- Clear Data -->
+      <button id="menuClearData" class="w-full py-3.5 px-4 text-left text-red-500 text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <span>Reset & Clear All Data</span>
+        </div>
+      </button>
+    </div>
+    <button id="closeMoreSheet" class="w-full py-3.5 bg-[#2c2c2e] text-white font-semibold rounded-2xl active:scale-98">Cancel</button>
+    
+    <div class="text-center text-[11px] tracking-widest uppercase text-neutral-500 font-medium pt-3 pb-1">
+      A &nbsp; Halim Rayyan &nbsp; Application
+    </div>
+  </div>
+
+  <!-- CONFIRM RESET DATA MODAL -->
+  <div id="confirmClearModal" class="fixed inset-0 z-50 bg-black/70 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-[#1c1c1e] rounded-3xl w-full max-w-sm border border-neutral-800 p-6 space-y-3">
+      <h3 class="text-lg font-bold text-white">Reset All Data?</h3>
+      <p class="text-xs text-neutral-400 leading-relaxed">
+        This will delete all saved transactions permanently. This action cannot be undone.
+      </p>
+      <div class="flex space-x-2 pt-3">
+        <button id="cancelClearBtn" class="flex-1 py-2.5 rounded-xl bg-[#2c2c2e] text-white font-medium text-sm active:scale-95 transition-all">Cancel</button>
+        <button id="confirmClearBtn" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm active:scale-95 transition-all">Delete All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       JAVASCRIPT LOGIC & STATE MANAGEMENT
+       ============================================================= -->
+  <script>
+    const STORAGE_KEY = 'kannakk_book_expenses';
+    const USER_KEY = 'kannakk_book_username';
+    const HAPTIC_KEY = 'kannakk_book_haptic_enabled';
+    const CURRENCY_KEY = 'kannakk_book_currency';
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const fullMonthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    const categoryColors = {
+      "Shopping": "#ff3b30",
+      "Groceries": "#34c759",
+      "Food & Drinks": "#ff9500",
+      "Entertainment": "#af52de",
+      "Transportation": "#0a84ff",
+      "Personal": "#ff2d55",
+      "Health": "#30d158",
+      "Others": "#8e8e93"
+    };
+
+    const initialNow = new Date();
+
+    let state = {
+      user: localStorage.getItem(USER_KEY) || "Halim Rayyan Mether",
+      currency: localStorage.getItem(CURRENCY_KEY) || "₹",
+      hapticEnabled: localStorage.getItem(HAPTIC_KEY) !== 'false',
+      expenses: JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"),
+      editingId: null,
+      form: {
+        title: "",
+        rawAmount: "",
+        category: "Shopping",
+        payment: "Bank",
+        date: new Date()
+      },
+      calendarView: {
+        year: initialNow.getFullYear(),
+        month: initialNow.getMonth()
+      },
+      analytics: {
+        selectedYear: initialNow.getFullYear(),
+        selectedMonth: initialNow.getMonth()
+      }
+    };
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.expenses));
+      localStorage.setItem(USER_KEY, state.user);
+      localStorage.setItem(CURRENCY_KEY, state.currency);
+      localStorage.setItem(HAPTIC_KEY, state.hapticEnabled);
+    }
+
+    function formatCurrency(amount) {
+      return Number(amount).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatDateDisplay(d) {
+      const dateObj = new Date(d);
+      const day = dateObj.getDate();
+      const month = monthNames[dateObj.getMonth()];
+      const year = dateObj.getFullYear();
+      return `${day} ${month} ${year}`;
+    }
+
+    // Audio fallback for haptics/click sound
+    const audioCtx = typeof AudioContext !== 'undefined' ? new (window.AudioContext || window.webkitAudioContext)() : null;
+    function playClickFeedback() {
+      if (!audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function vibrate() {
+      if (!state.hapticEnabled) return;
+      if (navigator.vibrate) {
+        navigator.vibrate(12);
+      }
+      playClickFeedback();
+    }
+
+    function getYearMonthlyTotals(targetYear) {
+      const totals = new Array(12).fill(0);
+      state.expenses.forEach(exp => {
+        const d = new Date(exp.date);
+        if (d.getFullYear() === targetYear) {
+          totals[d.getMonth()] += exp.amount;
+        }
+      });
+      return totals;
+    }
+
+    function renderHomeScrollableChart(targetYear) {
+      const monthlyTotals = getYearMonthlyTotals(targetYear);
+      const maxSpend = Math.max(...monthlyTotals, 0);
+
+      let topStep = 2000;
+      if (maxSpend > 2000) {
+        const needed = Math.ceil(maxSpend / 500) * 500;
+        const stepCount = Math.ceil(needed / 500);
+        topStep = Math.max(stepCount * 500, 2000);
+      }
+
+      const halfStep = Math.round(topStep / 2);
+      const steps = [topStep, halfStep, 0];
+
+      const yAxisLabelsEl = document.getElementById('homeYAxisLabels');
+      if (yAxisLabelsEl) {
+        yAxisLabelsEl.innerHTML = `
+          <span>${steps[0]}</span>
+          <span>${steps[1]}</span>
+          <span>0</span>
+        `;
+      }
+
+      const gridContainer = document.getElementById('homeGridLines');
+      if (gridContainer) {
+        gridContainer.innerHTML = `
+          <div class="w-full border-b border-neutral-800/40"></div>
+          <div class="w-full border-b border-dashed border-neutral-800/40"></div>
+          <div class="w-full border-b border-neutral-700/80"></div>
+        `;
+      }
+
+      let peakIdx = -1;
+      let peakValue = 0;
+      monthlyTotals.forEach((amt, idx) => {
+        if (amt > peakValue) {
+          peakValue = amt;
+          peakIdx = idx;
+        }
+      });
+
+      const barsContainer = document.getElementById('homeBarsContainer');
+      const xAxisContainer = document.getElementById('homeXAxisLabels');
+      if (!barsContainer || !xAxisContainer) return;
+
+      barsContainer.innerHTML = "";
+      xAxisContainer.innerHTML = "";
+
+      const currentActiveMonth = (state.calendarView.month !== undefined) ? state.calendarView.month : new Date().getMonth();
+
+      monthlyTotals.forEach((amt, idx) => {
+        const heightPct = topStep > 0 ? (amt / topStep) * 100 : 0;
+        const isHighest = idx === peakIdx && amt > 0;
+        const isCurrentActiveMonth = idx === currentActiveMonth;
+
+        const col = document.createElement('div');
+        col.className = "w-[8.333%] h-full flex flex-col items-center justify-end px-2 group relative cursor-pointer";
+        col.style.scrollSnapAlign = "start";
+        col.title = `${monthNames[idx]}: ${state.currency}${formatCurrency(amt)}`;
+
+        col.innerHTML = `
+          ${amt > 0 ? `<span class="text-[9px] font-num text-neutral-400 mb-1 opacity-80">${Math.round(amt)}</span>` : ''}
+          <div class="w-full max-w-[26px] sm:max-w-[32px] transition-all duration-500 rounded-t-lg ${isHighest ? 'bg-white shadow-[0_0_12px_rgba(255,255,255,0.45)]' : (isCurrentActiveMonth ? 'bg-neutral-200' : (amt > 0 ? 'bg-neutral-500' : 'bg-[#28282a]/60'))}" 
+               style="height: ${Math.max(heightPct, amt > 0 ? 6 : 4)}%;">
+          </div>
+        `;
+        barsContainer.appendChild(col);
+
+        const lbl = document.createElement('div');
+        lbl.className = `w-[8.333%] text-center text-[11px] ${isCurrentActiveMonth ? 'text-white font-bold' : 'text-neutral-400 font-medium'}`;
+        lbl.textContent = monthNames[idx];
+        xAxisContainer.appendChild(lbl);
+      });
+
+      const scrollWrapper = document.getElementById('homeChartScrollWrapper');
+      if (scrollWrapper && scrollWrapper.scrollWidth > scrollWrapper.clientWidth) {
+        const frameIndex = Math.floor(currentActiveMonth / 4);
+        setTimeout(() => {
+          scrollWrapper.scrollTo({
+            left: frameIndex * scrollWrapper.clientWidth,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }
+
+    function renderYearMonthChart(targetYear, containerBarsId, gridLinesId) {
+      const monthlyTotals = getYearMonthlyTotals(targetYear);
+      const maxSpend = Math.max(...monthlyTotals, 0);
+
+      let topStep = 2000;
+      if (maxSpend > 2000) {
+        const needed = Math.ceil(maxSpend / 500) * 500;
+        const stepCount = Math.ceil(needed / 500);
+        topStep = Math.max(stepCount * 500, 2000);
+      }
+
+      const interval = topStep / 4;
+      const steps = [
+        topStep,
+        Math.round(topStep - interval),
+        Math.round(topStep - interval * 2),
+        Math.round(topStep - interval * 3),
+        0
+      ];
+
+      const gridContainer = document.getElementById(gridLinesId);
+      if (gridContainer) {
+        gridContainer.innerHTML = `
+          <div class="flex items-center justify-between border-b border-neutral-800/80 pb-1">
+            <div class="w-full border-b border-[#2c2c2e]"></div>
+            <span class="text-[10px] text-neutral-500 pl-2 w-11 text-right font-num">${steps[0]}</span>
+          </div>
+          <div class="flex items-center justify-between border-b border-neutral-800/80 pb-1">
+            <div class="w-full border-b border-[#2c2c2e]"></div>
+            <span class="text-[10px] text-neutral-500 pl-2 w-11 text-right font-num">${steps[1]}</span>
+          </div>
+          <div class="flex items-center justify-between border-b border-neutral-800/80 pb-1">
+            <div class="w-full border-b border-[#2c2c2e]"></div>
+            <span class="text-[10px] text-neutral-500 pl-2 w-11 text-right font-num">${steps[2]}</span>
+          </div>
+          <div class="flex items-center justify-between border-b border-neutral-800/80 pb-1">
+            <div class="w-full border-b border-[#2c2c2e]"></div>
+            <span class="text-[10px] text-neutral-500 pl-2 w-11 text-right font-num">${steps[3]}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="w-full border-b border-[#2c2c2e]"></div>
+            <span class="text-[10px] text-neutral-500 pl-2 w-11 text-right font-num">0</span>
+          </div>
+        `;
+      }
+
+      let peakIdx = -1;
+      let peakValue = 0;
+      monthlyTotals.forEach((amt, idx) => {
+        if (amt > peakValue) {
+          peakValue = amt;
+          peakIdx = idx;
+        }
+      });
+
+      const barsContainer = document.getElementById(containerBarsId);
+      if (!barsContainer) return { total: 0, highestMonth: "None" };
+      barsContainer.innerHTML = "";
+
+      monthlyTotals.forEach((amt, idx) => {
+        const heightPct = topStep > 0 ? (amt / topStep) * 100 : 0;
+        const isHighest = idx === peakIdx && amt > 0;
+
+        const col = document.createElement('div');
+        col.className = "flex flex-col items-center flex-1 h-full justify-end group relative cursor-pointer";
+        col.title = `${monthNames[idx]}: ${state.currency}${formatCurrency(amt)}`;
+
+        col.innerHTML = `
+          <div class="w-full max-w-[14px] sm:max-w-[18px] transition-all duration-500 rounded-t-md ${isHighest ? 'bg-white shadow-[0_0_10px_rgba(255,255,255,0.45)]' : (amt > 0 ? 'bg-neutral-400' : 'bg-neutral-800/50')}" 
+               style="height: ${Math.max(heightPct, amt > 0 ? 5 : 0)}%;">
+          </div>
+        `;
+        barsContainer.appendChild(col);
+      });
+
+      return {
+        total: monthlyTotals.reduce((a, b) => a + b, 0),
+        highestMonth: peakIdx !== -1 ? `${monthNames[peakIdx]} (${state.currency}${formatCurrency(peakValue)})` : "None"
+      };
+    }
+
+    function updateCurrencyLabels() {
+      const curr = state.currency;
+      const labelMap = {
+        "₹": "INR (₹)",
+        "$": "USD ($)",
+        "€": "EUR (€)",
+        "£": "GBP (£)",
+        "AED ": "AED"
+      };
+      const currLabelEl = document.getElementById('currentCurrencyLabel');
+      if (currLabelEl) {
+        currLabelEl.textContent = labelMap[curr] || curr;
+      }
+      const prefixEl = document.getElementById('formCurrencyPrefix');
+      if (prefixEl) {
+        prefixEl.textContent = curr;
+      }
+    }
+
+    function renderDashboard() {
+      document.getElementById('displayUserName').textContent = state.user;
+      updateCurrencyLabels();
+
+      const emptyEl = document.getElementById('emptyState');
+      const activeEl = document.getElementById('activeState');
+
+      if (state.expenses.length === 0) {
+        emptyEl.classList.remove('hidden');
+        emptyEl.classList.add('flex');
+        activeEl.classList.add('hidden');
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      emptyEl.classList.remove('flex');
+      activeEl.classList.remove('hidden');
+
+      const currentYear = state.calendarView.year || new Date().getFullYear();
+      const currentMonth = state.calendarView.month !== undefined ? state.calendarView.month : new Date().getMonth();
+
+      let currentMonthSpent = 0;
+      state.expenses.forEach(item => {
+        const d = new Date(item.date);
+        if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
+          currentMonthSpent += item.amount;
+        }
+      });
+      document.getElementById('homeMonthSpentTotal').textContent = `${state.currency}${formatCurrency(currentMonthSpent)}`;
+
+      renderHomeScrollableChart(currentYear);
+      renderTransactionsList();
+    }
+
+    function renderTransactionsList() {
+      const listEl = document.getElementById('expensesList');
+      listEl.innerHTML = "";
+
+      const sorted = [...state.expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sorted.forEach(item => {
+        const categoryColor = categoryColors[item.category] || "#8e8e93";
+        const isCash = item.payment === 'Cash';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = "relative rounded-2xl overflow-hidden bg-[#1c1c1e] select-none";
+
+        const actionBackdrop = document.createElement('div');
+        actionBackdrop.className = "absolute inset-y-0 right-0 w-36 flex items-stretch z-0";
+        actionBackdrop.innerHTML = `
+          <button class="action-edit flex-1 bg-blue-600 hover:bg-blue-700 text-white flex flex-col items-center justify-center font-medium text-xs active:opacity-80">
+            <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/>
+            </svg>
+            <span>Edit</span>
+          </button>
+          <button class="action-delete flex-1 bg-red-600 hover:bg-red-700 text-white flex flex-col items-center justify-center font-medium text-xs active:opacity-80">
+            <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            <span>Delete</span>
+          </button>
+        `;
+
+        actionBackdrop.querySelector('.action-edit').addEventListener('click', (e) => {
+          e.stopPropagation();
+          vibrate();
+          openEditExpense(item.id);
+        });
+
+        actionBackdrop.querySelector('.action-delete').addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteExpenseById(item.id);
+        });
+
+        const row = document.createElement('div');
+        row.className = "swipe-item-content relative z-10 bg-[#1c1c1e] p-4 flex items-center justify-between border border-[#2c2c2e] rounded-2xl";
+
+        const paymentIconSvg = isCash ? `
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <rect x="2" y="6" width="20" height="12" rx="2" stroke-width="2"/>
+            <circle cx="12" cy="12" r="3" stroke-width="2"/>
+            <path stroke-linecap="round" d="M6 12h.01M18 12h.01"/>
+          </svg>
+        ` : `
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <rect x="2" y="5" width="20" height="14" rx="3" stroke-width="2"/>
+            <line x1="2" y1="10" x2="22" y2="10" stroke-width="2"/>
+            <circle cx="6" cy="15" r="1" fill="currentColor"/>
+          </svg>
+        `;
+        
+        row.innerHTML = `
+          <div class="flex items-center space-x-3.5 pointer-events-none">
+            <div class="w-11 h-11 rounded-xl bg-[#2c2c2e] flex items-center justify-center shrink-0 relative">
+              <span class="w-2.5 h-2.5 rounded-full absolute top-2 right-2" style="background-color: ${categoryColor}"></span>
+              ${paymentIconSvg}
+            </div>
+            <div>
+              <div class="text-white font-medium text-base leading-snug">${item.title || "Expense"}</div>
+              <div class="text-neutral-400 text-xs flex items-center space-x-1.5 mt-0.5">
+                <span class="font-num">${formatDateDisplay(item.date)}</span>
+                <span>•</span>
+                <span class="text-neutral-300 font-sans">${item.payment || "Bank"}</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-white font-bold text-base font-num pointer-events-none">
+            ${state.currency}${formatCurrency(item.amount)}
+          </div>
+        `;
+
+        let startX = 0;
+        let currentX = 0;
+        let isSwiping = false;
+        let isOpen = false;
+
+        row.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          isSwiping = true;
+          row.style.transition = 'none';
+        }, { passive: true });
+
+        row.addEventListener('touchmove', (e) => {
+          if (!isSwiping) return;
+          currentX = e.touches[0].clientX;
+          let diff = currentX - startX;
+
+          if (isOpen) {
+            diff -= 144;
+          }
+
+          if (diff < -180) diff = -180 + (diff + 180) * 0.2;
+          if (diff > 10) diff = 0;
+
+          if (diff <= 0) {
+            row.style.transform = `translateX(${diff}px)`;
+          }
+        }, { passive: true });
+
+        row.addEventListener('touchend', () => {
+          if (!isSwiping) return;
+          isSwiping = false;
+          row.style.transition = 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)';
+
+          const diff = currentX - startX;
+
+          if (isOpen) {
+            if (diff > 35) {
+              row.style.transform = 'translateX(0px)';
+              isOpen = false;
+            } else {
+              row.style.transform = 'translateX(-144px)';
+            }
+          } else {
+            if (diff < -50) {
+              row.style.transform = 'translateX(-144px)';
+              isOpen = true;
+              vibrate();
+            } else {
+              row.style.transform = 'translateX(0px)';
+            }
+          }
+        });
+
+        row.addEventListener('click', () => {
+          if (isOpen) {
+            row.style.transform = 'translateX(0px)';
+            isOpen = false;
+          }
+        });
+
+        wrapper.appendChild(actionBackdrop);
+        wrapper.appendChild(row);
+        listEl.appendChild(wrapper);
+      });
+    }
+
+    function deleteExpenseById(id) {
+      vibrate();
+      state.expenses = state.expenses.filter(e => e.id !== id);
+      saveState();
+      renderDashboard();
+      if (!analyticsView.classList.contains('translate-x-full')) {
+        renderAnalyticsScreen();
+      }
+    }
+
+    /* -------------------------------------------------------------
+       DETAILED ANALYTICS SCREEN RENDERING
+    ------------------------------------------------------------- */
+    function renderAnalyticsScreen() {
+      const year = state.analytics.selectedYear;
+      const month = state.analytics.selectedMonth;
+
+      document.getElementById('currentYearDisplay').textContent = year;
+      document.getElementById('analyticsActiveYearBadge').textContent = year;
+      document.getElementById('currentMonthDisplay').textContent = monthNames[month];
+
+      const stats = renderYearMonthChart(year, 'analyticsBarsContainer', 'analyticsGridLines');
+      document.getElementById('analyticsYearTotal').textContent = `${state.currency}${formatCurrency(stats.total)}`;
+
+      const monthExpenses = state.expenses.filter(e => {
+        const d = new Date(e.date);
+        return d.getFullYear() === year && d.getMonth() === month;
+      });
+
+      const categoryTotals = {};
+      let totalForMonth = 0;
+
+      const allowedCategories = ["Shopping", "Groceries", "Food & Drinks", "Entertainment", "Transportation", "Personal", "Health", "Others"];
+      allowedCategories.forEach(cat => categoryTotals[cat] = 0);
+
+      monthExpenses.forEach(e => {
+        const cat = allowedCategories.includes(e.category) ? e.category : "Others";
+        categoryTotals[cat] = (categoryTotals[cat] || 0) + e.amount;
+        totalForMonth += e.amount;
+      });
+
+      document.getElementById('pieChartMonthTotal').textContent = `${state.currency}${formatCurrency(totalForMonth)}`;
+      document.getElementById('donutCenterAmount').textContent = `${state.currency}${Math.round(totalForMonth)}`;
+      document.getElementById('pieChartSelectedPeriod').textContent = `${monthNames[month]} ${year}`;
+
+      const svgEl = document.getElementById('categoryPieSvg');
+      svgEl.innerHTML = "";
+
+      const legendEl = document.getElementById('pieLegendContainer');
+      legendEl.innerHTML = "";
+
+      if (totalForMonth === 0) {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", "50");
+        circle.setAttribute("cy", "50");
+        circle.setAttribute("r", "38");
+        circle.setAttribute("fill", "none");
+        circle.setAttribute("stroke", "#2c2c2e");
+        circle.setAttribute("stroke-width", "16");
+        svgEl.appendChild(circle);
+
+        legendEl.innerHTML = `<div class="text-neutral-500 text-xs py-2 text-center font-num">No expenses recorded for ${monthNames[month]} ${year}</div>`;
+      } else {
+        let accumulatedAngle = 0;
+        const circumference = 2 * Math.PI * 38;
+
+        const sortedCats = Object.entries(categoryTotals)
+          .filter(([_, amt]) => amt > 0)
+          .sort((a, b) => b[1] - a[1]);
+
+        sortedCats.forEach(([catName, amt]) => {
+          const pct = amt / totalForMonth;
+          const strokeLength = pct * circumference;
+          const strokeDashoffset = -accumulatedAngle;
+          const color = categoryColors[catName] || "#8e8e93";
+
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", "50");
+          circle.setAttribute("cy", "50");
+          circle.setAttribute("r", "38");
+          circle.setAttribute("fill", "none");
+          circle.setAttribute("stroke", color);
+          circle.setAttribute("stroke-width", "16");
+          circle.setAttribute("stroke-dasharray", `${strokeLength} ${circumference}`);
+          circle.setAttribute("stroke-dashoffset", strokeDashoffset);
+          svgEl.appendChild(circle);
+
+          accumulatedAngle += strokeLength;
+
+          const legRow = document.createElement('div');
+          legRow.className = "flex items-center justify-between py-1 border-b border-neutral-800/60";
+          legRow.innerHTML = `
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${color}"></span>
+              <span class="text-neutral-200 font-medium">${catName}</span>
+            </div>
+            <div class="flex items-center space-x-2 font-num text-neutral-300">
+              <span>${state.currency}${formatCurrency(amt)}</span>
+              <span class="text-neutral-500 text-[11px] w-9 text-right">${Math.round(pct * 100)}%</span>
+            </div>
+          `;
+          legendEl.appendChild(legRow);
+        });
+      }
+    }
+
+    document.getElementById('prevYearBtn').addEventListener('click', () => {
+      vibrate();
+      state.analytics.selectedYear--;
+      renderAnalyticsScreen();
+    });
+
+    document.getElementById('nextYearBtn').addEventListener('click', () => {
+      vibrate();
+      state.analytics.selectedYear++;
+      renderAnalyticsScreen();
+    });
+
+    document.getElementById('prevMonthStepperBtn').addEventListener('click', () => {
+      vibrate();
+      state.analytics.selectedMonth--;
+      if (state.analytics.selectedMonth < 0) {
+        state.analytics.selectedMonth = 11;
+        state.analytics.selectedYear--;
+      }
+      renderAnalyticsScreen();
+    });
+
+    document.getElementById('nextMonthStepperBtn').addEventListener('click', () => {
+      vibrate();
+      state.analytics.selectedMonth++;
+      if (state.analytics.selectedMonth > 11) {
+        state.analytics.selectedMonth = 0;
+        state.analytics.selectedYear++;
+      }
+      renderAnalyticsScreen();
+    });
+
+    const homeView = document.getElementById('homeView');
+    const analyticsView = document.getElementById('analyticsView');
+    const openAnalyticsBtn = document.getElementById('openAnalyticsBtn');
+    const backToHomeBtn = document.getElementById('backToHomeBtn');
+
+    openAnalyticsBtn.addEventListener('click', () => {
+      vibrate();
+      renderAnalyticsScreen();
+      analyticsView.classList.remove('translate-x-full');
+    });
+
+    backToHomeBtn.addEventListener('click', () => {
+      vibrate();
+      analyticsView.classList.add('translate-x-full');
+      renderDashboard();
+    });
+
+    /* -------------------------------------------------------------
+       EXPENSE FORM & MODAL LOGIC
+    ------------------------------------------------------------- */
+    const modalBackdrop = document.getElementById('expenseModalBackdrop');
+    const modalSheet = document.getElementById('expenseModalSheet');
+    const amountValEl = document.getElementById('amountValueText');
+    const saveBtn = document.getElementById('modalSaveBtn');
+    const titleInput = document.getElementById('expenseTitleInput');
+
+    function updateAmountDisplay() {
+      let num = 0;
+      if (state.form.rawAmount.length > 0) {
+        num = parseFloat(state.form.rawAmount);
+      }
+      amountValEl.textContent = formatCurrency(num);
+
+      if (num > 0) {
+        saveBtn.removeAttribute('disabled');
+        saveBtn.classList.remove('text-neutral-500');
+        saveBtn.classList.add('text-white', 'bg-[#3a3a3c]');
+      } else {
+        saveBtn.setAttribute('disabled', 'true');
+        saveBtn.classList.add('text-neutral-500');
+        saveBtn.classList.remove('text-white', 'bg-[#3a3a3c]');
+      }
+    }
+
+    function openNewExpenseModal() {
+      vibrate();
+      state.editingId = null;
+      state.form.title = "";
+      state.form.rawAmount = "";
+      state.form.category = "Shopping";
+      state.form.payment = "Bank";
+      state.form.date = new Date();
+
+      document.getElementById('modalHeaderTitle').textContent = "New Expense";
+      titleInput.value = "";
+
+      updateFormElements();
+      updateAmountDisplay();
+
+      modalBackdrop.classList.remove('pointer-events-none');
+      modalBackdrop.classList.add('opacity-100');
+      modalSheet.classList.remove('translate-y-full');
+    }
+
+    function openEditExpense(id) {
+      const exp = state.expenses.find(e => e.id === id);
+      if (!exp) return;
+
+      state.editingId = id;
+      state.form.title = exp.title;
+      state.form.rawAmount = exp.amount.toString();
+      state.form.category = exp.category || "Shopping";
+      state.form.payment = exp.payment || "Bank";
+      state.form.date = new Date(exp.date);
+
+      document.getElementById('modalHeaderTitle').textContent = "Edit Expense";
+      titleInput.value = exp.title;
+
+      updateFormElements();
+      updateAmountDisplay();
+
+      modalBackdrop.classList.remove('pointer-events-none');
+      modalBackdrop.classList.add('opacity-100');
+      modalSheet.classList.remove('translate-y-full');
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove('opacity-100');
+      modalBackdrop.classList.add('pointer-events-none');
+      modalSheet.classList.add('translate-y-full');
+      closeCalendar();
+    }
+
+    function updateFormElements() {
+      document.getElementById('categoryDisplayText').textContent = state.form.category;
+      document.getElementById('paymentDisplayText').textContent = state.form.payment;
+      document.getElementById('dateDisplayText').textContent = formatDateDisplay(state.form.date);
+      document.getElementById('formCurrencyPrefix').textContent = state.currency;
+    }
+
+    document.querySelectorAll('.keypad-key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        vibrate();
+        const key = btn.getAttribute('data-key');
+        if (key === 'BACKSPACE') {
+          if (state.form.rawAmount.length > 0) {
+            state.form.rawAmount = state.form.rawAmount.slice(0, -1);
+          }
+        } else if (key === '.') {
+          if (!state.form.rawAmount.includes('.')) {
+            state.form.rawAmount = (state.form.rawAmount || '0') + '.';
+          }
+        } else {
+          if (state.form.rawAmount.includes('.')) {
+            const parts = state.form.rawAmount.split('.');
+            if (parts[1].length >= 2) return;
+          }
+          if (state.form.rawAmount === "0") {
+            state.form.rawAmount = key;
+          } else {
+            state.form.rawAmount += key;
+          }
+        }
+        updateAmountDisplay();
+      });
+    });
+
+    titleInput.addEventListener('input', (e) => {
+      state.form.title = e.target.value;
+      updateAmountDisplay();
+    });
+
+    saveBtn.addEventListener('click', () => {
+      const amt = parseFloat(state.form.rawAmount);
+      if (isNaN(amt) || amt <= 0) return;
+      vibrate();
+
+      if (state.editingId) {
+        const idx = state.expenses.findIndex(e => e.id === state.editingId);
+        if (idx !== -1) {
+          state.expenses[idx] = {
+            ...state.expenses[idx],
+            title: state.form.title.trim() || "Expense",
+            amount: amt,
+            category: state.form.category,
+            payment: state.form.payment,
+            date: state.form.date.toISOString()
+          };
+        }
+      } else {
+        const newExpense = {
+          id: 'exp_' + Date.now(),
+          title: state.form.title.trim() || "Expense",
+          amount: amt,
+          category: state.form.category,
+          payment: state.form.payment,
+          date: state.form.date.toISOString()
+        };
+        state.expenses.unshift(newExpense);
+      }
+
+      saveState();
+      renderDashboard();
+      if (!analyticsView.classList.contains('translate-x-full')) {
+        renderAnalyticsScreen();
+      }
+      closeModal();
+    });
+
+    document.getElementById('modalCancelBtn').addEventListener('click', () => {
+      vibrate();
+      closeModal();
+    });
+    modalBackdrop.addEventListener('click', closeModal);
+    document.getElementById('openNewExpenseBtn').addEventListener('click', openNewExpenseModal);
+
+    /* -------------------------------------------------------------
+       CATEGORY & PAYMENT POPOVERS
+    ------------------------------------------------------------- */
+    const categoryRow = document.getElementById('categoryRow');
+    const categoryModal = document.getElementById('categoryModal');
+    const paymentRow = document.getElementById('paymentRow');
+    const paymentModal = document.getElementById('paymentModal');
+
+    categoryRow.addEventListener('click', () => {
+      vibrate();
+      document.querySelectorAll('.category-item').forEach(item => {
+        const val = item.getAttribute('data-value');
+        const icon = item.querySelector('.check-icon');
+        if (val === state.form.category) {
+          icon.classList.remove('opacity-0');
+        } else {
+          icon.classList.add('opacity-0');
+        }
+      });
+      categoryModal.classList.remove('hidden');
+    });
+
+    categoryModal.addEventListener('click', (e) => {
+      const item = e.target.closest('.category-item');
+      if (item) {
+        vibrate();
+        state.form.category = item.getAttribute('data-value');
+        updateFormElements();
+      }
+      categoryModal.classList.add('hidden');
+    });
+
+    paymentRow.addEventListener('click', () => {
+      vibrate();
+      document.querySelectorAll('.payment-item').forEach(item => {
+        const val = item.getAttribute('data-value');
+        const icon = item.querySelector('.check-icon');
+        if (val === state.form.payment) {
+          icon.classList.remove('opacity-0');
+        } else {
+          icon.classList.add('opacity-0');
+        }
+      });
+      paymentModal.classList.remove('hidden');
+    });
+
+    paymentModal.addEventListener('click', (e) => {
+      const item = e.target.closest('.payment-item');
+      if (item) {
+        vibrate();
+        state.form.payment = item.getAttribute('data-value');
+        updateFormElements();
+      }
+      paymentModal.classList.add('hidden');
+    });
+
+    /* -------------------------------------------------------------
+       CURRENCY SELECTION LOGIC
+    ------------------------------------------------------------- */
+    const currencyModal = document.getElementById('currencyModal');
+    const menuCurrencySwitch = document.getElementById('menuCurrencySwitch');
+
+    menuCurrencySwitch.addEventListener('click', () => {
+      vibrate();
+      document.querySelectorAll('.currency-item').forEach(item => {
+        const val = item.getAttribute('data-value');
+        const icon = item.querySelector('.check-icon');
+        if (val === state.currency) {
+          icon.classList.remove('opacity-0');
+        } else {
+          icon.classList.add('opacity-0');
+        }
+      });
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+      currencyModal.classList.remove('hidden');
+      currencyModal.classList.add('flex');
+    });
+
+    currencyModal.addEventListener('click', (e) => {
+      const item = e.target.closest('.currency-item');
+      if (item) {
+        vibrate();
+        state.currency = item.getAttribute('data-value');
+        saveState();
+        renderDashboard();
+        if (!analyticsView.classList.contains('translate-x-full')) {
+          renderAnalyticsScreen();
+        }
+      }
+      currencyModal.classList.add('hidden');
+      currencyModal.classList.remove('flex');
+    });
+
+    /* -------------------------------------------------------------
+       HAPTIC FEEDBACK TOGGLE LOGIC
+    ------------------------------------------------------------- */
+    const hapticToggleBtn = document.getElementById('hapticToggleBtn');
+    const hapticToggleThumb = document.getElementById('hapticToggleThumb');
+
+    function syncHapticToggleUI() {
+      if (state.hapticEnabled) {
+        hapticToggleBtn.classList.remove('bg-neutral-700');
+        hapticToggleBtn.classList.add('bg-blue-600');
+        hapticToggleThumb.classList.remove('translate-x-0');
+        hapticToggleThumb.classList.add('translate-x-5');
+      } else {
+        hapticToggleBtn.classList.remove('bg-blue-600');
+        hapticToggleBtn.classList.add('bg-neutral-700');
+        hapticToggleThumb.classList.remove('translate-x-5');
+        hapticToggleThumb.classList.add('translate-x-0');
+      }
+    }
+
+    hapticToggleBtn.addEventListener('click', () => {
+      state.hapticEnabled = !state.hapticEnabled;
+      syncHapticToggleUI();
+      saveState();
+      vibrate();
+    });
+
+    /* -------------------------------------------------------------
+       CSV / EXCEL EXPORT LOGIC
+    ------------------------------------------------------------- */
+    const menuExportCsv = document.getElementById('menuExportCsv');
+
+    function exportToCsv() {
+      if (!state.expenses || state.expenses.length === 0) {
+        alert("No expenses to export.");
+        return;
+      }
+
+      const headers = ["Title", "Amount", "Currency", "Category", "Payment Method", "Date"];
+      const escapeCsvCell = (str) => {
+        const stringVal = str === null || str === undefined ? "" : String(str);
+        if (stringVal.includes(',') || stringVal.includes('"') || stringVal.includes('\n')) {
+          return `"${stringVal.replace(/"/g, '""')}"`;
+        }
+        return stringVal;
+      };
+
+      const rows = state.expenses.map(item => [
+        escapeCsvCell(item.title || "Expense"),
+        escapeCsvCell(item.amount),
+        escapeCsvCell(state.currency.trim()),
+        escapeCsvCell(item.category || "Others"),
+        escapeCsvCell(item.payment || "Bank"),
+        escapeCsvCell(new Date(item.date).toLocaleDateString('en-IN'))
+      ]);
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(e => e.join(","))].join("\r\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.href = url;
+      downloadAnchor.setAttribute("download", `kannakk_book_expenses_${Date.now()}.csv`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      document.body.removeChild(downloadAnchor);
+      URL.revokeObjectURL(url);
+    }
+
+    menuExportCsv.addEventListener('click', () => {
+      vibrate();
+      exportToCsv();
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+    });
+
+    /* -------------------------------------------------------------
+       CALENDAR PICKER LOGIC
+    ------------------------------------------------------------- */
+    const dateRow = document.getElementById('dateRow');
+    const dateModalSheet = document.getElementById('dateModalSheet');
+    const closeCalendarBtn = document.getElementById('closeCalendarBtn');
+    const calDaysGrid = document.getElementById('calendarDaysGrid');
+    const calLabel = document.getElementById('calMonthYearLabel');
+
+    function renderCalendar() {
+      const { year, month } = state.calendarView;
+      calLabel.textContent = `${fullMonthNames[month]} ${year}`;
+      calDaysGrid.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = "py-2";
+        calDaysGrid.appendChild(emptyCell);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('button');
+        dayCell.className = "w-9 h-9 mx-auto flex items-center justify-center rounded-full text-sm font-num font-medium active:scale-90 transition-transform";
+        dayCell.textContent = day;
+
+        const isSelected = state.form.date.getFullYear() === year &&
+                           state.form.date.getMonth() === month &&
+                           state.form.date.getDate() === day;
+
+        if (isSelected) {
+          dayCell.className += " bg-white text-black font-bold shadow-md";
+        } else {
+          dayCell.className += " text-neutral-200 hover:bg-neutral-800";
+        }
+
+        dayCell.onclick = () => {
+          vibrate();
+          state.form.date = new Date(year, month, day);
+          updateFormElements();
+          renderCalendar();
+          closeCalendar();
+        };
+
+        calDaysGrid.appendChild(dayCell);
+      }
+    }
+
+    function openCalendar() {
+      vibrate();
+      state.calendarView.year = state.form.date.getFullYear();
+      state.calendarView.month = state.form.date.getMonth();
+      renderCalendar();
+      dateModalSheet.classList.remove('translate-y-full');
+    }
+
+    function closeCalendar() {
+      dateModalSheet.classList.add('translate-y-full');
+    }
+
+    dateRow.addEventListener('click', openCalendar);
+    closeCalendarBtn.addEventListener('click', () => {
+      vibrate();
+      closeCalendar();
+    });
+
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+      vibrate();
+      state.calendarView.month--;
+      if (state.calendarView.month < 0) {
+        state.calendarView.month = 11;
+        state.calendarView.year--;
+      }
+      renderCalendar();
+    });
+
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+      vibrate();
+      state.calendarView.month++;
+      if (state.calendarView.month > 11) {
+        state.calendarView.month = 0;
+        state.calendarView.year++;
+      }
+      renderCalendar();
+    });
+
+    /* -------------------------------------------------------------
+       PROFILE & MORE MENU
+    ------------------------------------------------------------- */
+    const profileBtn = document.getElementById('profilePillBtn');
+    const profileModal = document.getElementById('profileModal');
+    const userNameInput = document.getElementById('userNameInput');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+
+    profileBtn.addEventListener('click', () => {
+      vibrate();
+      userNameInput.value = state.user;
+      profileModal.classList.remove('hidden');
+      profileModal.classList.add('flex');
+    });
+
+    saveProfileBtn.addEventListener('click', () => {
+      vibrate();
+      if (userNameInput.value.trim()) {
+        state.user = userNameInput.value.trim();
+        saveState();
+        document.getElementById('displayUserName').textContent = state.user;
+      }
+      profileModal.classList.add('hidden');
+      profileModal.classList.remove('flex');
+    });
+
+    closeProfileModal.addEventListener('click', () => {
+      vibrate();
+      profileModal.classList.add('hidden');
+      profileModal.classList.remove('flex');
+    });
+
+    const moreMenuBtn = document.getElementById('moreMenuBtn');
+    const moreActionSheet = document.getElementById('moreActionSheet');
+    const closeMoreSheet = document.getElementById('closeMoreSheet');
+    const menuExportData = document.getElementById('menuExportData');
+    const menuClearData = document.getElementById('menuClearData');
+
+    const confirmClearModal = document.getElementById('confirmClearModal');
+    const cancelClearBtn = document.getElementById('cancelClearBtn');
+    const confirmClearBtn = document.getElementById('confirmClearBtn');
+
+    moreMenuBtn.addEventListener('click', () => {
+      vibrate();
+      syncHapticToggleUI();
+      moreActionSheet.classList.remove('hidden');
+      moreActionSheet.classList.add('flex');
+    });
+
+    closeMoreSheet.addEventListener('click', () => {
+      vibrate();
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+    });
+
+    menuExportData.addEventListener('click', () => {
+      vibrate();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.expenses, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `kannakk_book_backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+    });
+
+    menuClearData.addEventListener('click', () => {
+      vibrate();
+      moreActionSheet.classList.add('hidden');
+      moreActionSheet.classList.remove('flex');
+      confirmClearModal.classList.remove('hidden');
+      confirmClearModal.classList.add('flex');
+    });
+
+    cancelClearBtn.addEventListener('click', () => {
+      vibrate();
+      confirmClearModal.classList.add('hidden');
+      confirmClearModal.classList.remove('flex');
+    });
+
+    confirmClearBtn.addEventListener('click', () => {
+      vibrate();
+      state.expenses = [];
+      saveState();
+      renderDashboard();
+      confirmClearModal.classList.add('hidden');
+      confirmClearModal.classList.remove('flex');
+    });
+
+    function initializeSeedData() {
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        state.expenses = [
+          {
+            id: 'sample_1',
+            title: 'Grocery Store',
+            amount: 500.00,
+            category: 'Groceries',
+            payment: 'Cash',
+            date: new Date().toISOString()
+          },
+          {
+            id: 'sample_2',
+            title: 'Online Electronics',
+            amount: 1500.00,
+            category: 'Shopping',
+            payment: 'Bank',
+            date: new Date().toISOString()
+          }
+        ];
+        saveState();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initializeSeedData();
+      syncHapticToggleUI();
+      renderDashboard();
+    });
+  </script>
+</body>
+</html>
