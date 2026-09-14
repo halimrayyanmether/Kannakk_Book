@@ -414,36 +414,26 @@
     </div>
   </div>
 
-  <!-- CURRENCY SELECTION MODAL -->
-  <div id="currencyModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-6 backdrop-blur-[2px] transition-opacity">
-    <div class="bg-[#1e1e20] w-full max-w-xs rounded-3xl overflow-hidden border border-neutral-700 shadow-2xl p-2 space-y-1">
-      <div class="flex items-center justify-between px-3 py-2 border-b border-neutral-800">
-        <span class="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Select Currency</span>
-        <button id="quickEditCurrencyBtn" class="text-xs text-blue-500 hover:text-blue-400 font-medium">Manage</button>
-      </div>
-      <div id="currencySelectionList" class="max-h-[60vh] overflow-y-auto custom-scrollbar space-y-1 pt-1"></div>
-    </div>
-  </div>
-
-  <!-- MANAGE CURRENCIES MODAL -->
-  <div id="manageCurrenciesModal" class="fixed inset-0 z-50 bg-black/70 hidden items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-[#1c1c1e] rounded-3xl w-full max-w-sm border border-neutral-800 p-5 space-y-4 max-h-[85vh] flex flex-col">
+  <!-- ALL-IN-ONE CURRENCY MODAL (SELECT + ADD + DELETE) -->
+  <div id="currencyModal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4 backdrop-blur-[2px] transition-opacity">
+    <div class="bg-[#1c1c1e] w-full max-w-sm rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl p-5 space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex items-center justify-between pb-2 border-b border-neutral-800">
-        <h3 class="text-base font-bold text-white">Manage Currencies</h3>
-        <button id="closeManageCurrenciesBtn" class="w-7 h-7 rounded-full bg-[#2c2c2e] text-neutral-400 flex items-center justify-center">✕</button>
+        <h3 class="text-base font-bold text-white">Currencies</h3>
+        <button id="closeCurrencyModalBtn" class="w-7 h-7 rounded-full bg-[#2c2c2e] text-neutral-400 flex items-center justify-center active:scale-90">✕</button>
       </div>
-      
-      <!-- New Currency Inputs -->
+
+      <!-- Add New Currency Inline Form -->
       <div class="space-y-2">
         <div class="flex space-x-2">
-          <input id="newCurrencySymbolInput" type="text" placeholder="Symbol (e.g. $, ₹)" class="w-24 bg-[#2c2c2e] text-white text-xs px-3 py-2 rounded-xl border border-neutral-700 focus:outline-none font-num">
-          <input id="newCurrencyNameInput" type="text" placeholder="Name (e.g. USD, INR)" class="flex-1 bg-[#2c2c2e] text-white text-xs px-3 py-2 rounded-xl border border-neutral-700 focus:outline-none">
+          <input id="newCurrencySymbolInput" type="text" placeholder="Symbol (e.g. $, ₹)" class="w-28 bg-[#2c2c2e] text-white text-xs px-3 py-2 rounded-xl border border-neutral-700 focus:outline-none font-num">
+          <input id="newCurrencyNameInput" type="text" placeholder="Name (e.g. USD, EUR)" class="flex-1 bg-[#2c2c2e] text-white text-xs px-3 py-2 rounded-xl border border-neutral-700 focus:outline-none">
         </div>
-        <button id="addCurrencyBtn" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold">Add Currency</button>
+        <button id="addCurrencyBtn" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold active:scale-95 transition-all">Add Currency</button>
       </div>
 
-      <!-- Currency Management List -->
-      <div id="currencyManagerList" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-neutral-800 space-y-1 pr-1"></div>
+      <!-- Currencies List (Tap to Select, Delete on Right) -->
+      <div class="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider pt-1">Select or Delete</div>
+      <div id="currencySelectionList" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-neutral-800 space-y-1 pr-1"></div>
     </div>
   </div>
 
@@ -541,7 +531,7 @@
   <div id="moreActionSheet" class="fixed inset-0 z-50 bg-black/60 hidden flex-col justify-end p-4 backdrop-blur-sm">
     <div class="bg-[#1c1c1e] rounded-2xl border border-neutral-800 divide-y divide-neutral-800 overflow-hidden mb-3">
       
-      <!-- Currency Switcher Option -->
+      <!-- Currency Option (Includes Selection and Management) -->
       <button id="menuCurrencySwitch" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -550,20 +540,6 @@
         <div class="flex items-center space-x-2 text-neutral-400 text-xs">
           <span id="currentCurrencyLabel" class="font-sans font-semibold">INR (₹)</span>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </div>
-      </button>
-
-      <!-- Manage Currencies Entry Option -->
-      <button id="menuManageCurrencies" class="w-full py-3.5 px-4 text-left text-white text-sm font-medium active:bg-[#2c2c2e] flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-          </svg>
-          <span>Manage Currencies</span>
-        </div>
-        <div class="flex items-center space-x-2 text-neutral-400 text-xs">
-          <span>Edit</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </div>
       </button>
 
@@ -593,7 +569,7 @@
         </div>
         <div class="flex items-center space-x-2 text-neutral-400 text-xs">
           <span>Edit</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </div>
       </button>
 
@@ -1485,7 +1461,7 @@
     });
 
     /* -------------------------------------------------------------
-       CATEGORY MANAGER LOGIC
+       CATEGORY MANAGER LOGIC (With Trash Can Icon)
     ------------------------------------------------------------- */
     const menuManageCategories = document.getElementById('menuManageCategories');
     const manageCategoriesModal = document.getElementById('manageCategoriesModal');
@@ -1504,7 +1480,11 @@
             <span class="w-3 h-3 rounded-full" style="background-color: ${getCategoryColor(cat)}"></span>
             <span>${cat}</span>
           </div>
-          <button class="delete-cat-btn text-red-400 hover:text-red-500 text-xs px-2 py-1 rounded bg-[#2c2c2e]" data-idx="${index}">Delete</button>
+          <button class="delete-cat-btn text-neutral-500 hover:text-red-400 p-1.5 rounded-lg active:scale-90 transition-colors shrink-0" data-idx="${index}" title="Delete Category">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
         `;
         categoryManagerList.appendChild(row);
       });
@@ -1568,52 +1548,57 @@
     }
 
     /* -------------------------------------------------------------
-       CURRENCY MANAGER LOGIC (Add / Delete / Choose)
+       ALL-IN-ONE CURRENCY MODAL LOGIC (Select / Add / Delete)
     ------------------------------------------------------------- */
     const currencyModal = document.getElementById('currencyModal');
     const menuCurrencySwitch = document.getElementById('menuCurrencySwitch');
-    const menuManageCurrencies = document.getElementById('menuManageCurrencies');
-    const manageCurrenciesModal = document.getElementById('manageCurrenciesModal');
-    const closeManageCurrenciesBtn = document.getElementById('closeManageCurrenciesBtn');
-    const quickEditCurrencyBtn = document.getElementById('quickEditCurrencyBtn');
+    const closeCurrencyModalBtn = document.getElementById('closeCurrencyModalBtn');
     const addCurrencyBtn = document.getElementById('addCurrencyBtn');
     const newCurrencySymbolInput = document.getElementById('newCurrencySymbolInput');
     const newCurrencyNameInput = document.getElementById('newCurrencyNameInput');
-    const currencyManagerList = document.getElementById('currencyManagerList');
     const currencySelectionList = document.getElementById('currencySelectionList');
 
-    function renderCurrencySelector() {
+    function renderCurrencyModal() {
       currencySelectionList.innerHTML = "";
-      state.currencies.forEach(curr => {
+      state.currencies.forEach((curr, index) => {
         const row = document.createElement('div');
         const isSelected = curr.symbol.trim() === state.currency.trim();
-        row.className = "currency-item flex items-center justify-between px-4 py-3 rounded-xl text-white font-medium hover:bg-neutral-800 active:bg-neutral-700 cursor-pointer";
-        row.setAttribute('data-value', curr.symbol);
+        row.className = "flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-[#2c2c2e] active:bg-neutral-800 transition-colors group";
+        
         row.innerHTML = `
-          <span>${curr.name}</span>
-          <span class="w-6 text-right check-icon ${isSelected ? '' : 'opacity-0'} font-bold text-blue-500">✓</span>
+          <div class="currency-select-trigger flex items-center space-x-2.5 flex-1 cursor-pointer select-none" data-value="${curr.symbol}">
+            <span class="w-7 h-7 rounded-lg bg-[#242426] border border-neutral-700/60 font-num flex items-center justify-center font-bold text-xs text-blue-400 shrink-0">${curr.symbol.trim()}</span>
+            <span class="text-sm font-medium ${isSelected ? 'text-white font-semibold' : 'text-neutral-300'} truncate">${curr.name}</span>
+            <span class="check-icon text-xs text-blue-500 font-bold ${isSelected ? '' : 'opacity-0'}">✓</span>
+          </div>
+          <button class="delete-curr-btn text-neutral-500 hover:text-red-400 p-1.5 rounded-lg active:scale-90 transition-colors shrink-0 ml-2" data-idx="${index}" title="Delete Currency">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
         `;
         currencySelectionList.appendChild(row);
       });
-    }
 
-    function renderCurrencyManager() {
-      currencyManagerList.innerHTML = "";
-      state.currencies.forEach((curr, index) => {
-        const row = document.createElement('div');
-        row.className = "flex items-center justify-between py-2.5 text-sm text-white";
-        row.innerHTML = `
-          <div class="flex items-center space-x-2">
-            <span class="w-8 h-8 rounded-lg bg-[#2c2c2e] font-num flex items-center justify-center font-bold text-sm text-blue-400">${curr.symbol.trim()}</span>
-            <span class="font-medium">${curr.name}</span>
-          </div>
-          <button class="delete-curr-btn text-red-400 hover:text-red-500 text-xs px-2.5 py-1 rounded-lg bg-[#2c2c2e] active:scale-95 transition-transform" data-idx="${index}">Delete</button>
-        `;
-        currencyManagerList.appendChild(row);
+      // Tap on the row to select currency
+      currencySelectionList.querySelectorAll('.currency-select-trigger').forEach(el => {
+        el.addEventListener('click', () => {
+          vibrate();
+          state.currency = el.getAttribute('data-value');
+          saveState();
+          renderDashboard();
+          if (!analyticsView.classList.contains('translate-x-full')) {
+            renderAnalyticsScreen();
+          }
+          currencyModal.classList.add('hidden');
+          currencyModal.classList.remove('flex');
+        });
       });
 
-      currencyManagerList.querySelectorAll('.delete-curr-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+      // Tap delete to remove currency
+      currencySelectionList.querySelectorAll('.delete-curr-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
           vibrate();
           const idx = parseInt(btn.getAttribute('data-idx'));
           if (state.currencies.length <= 1) {
@@ -1625,8 +1610,7 @@
             state.currency = state.currencies[0].symbol;
           }
           saveState();
-          renderCurrencyManager();
-          renderCurrencySelector();
+          renderCurrencyModal();
           renderDashboard();
         });
       });
@@ -1634,35 +1618,17 @@
 
     menuCurrencySwitch.addEventListener('click', () => {
       vibrate();
-      renderCurrencySelector();
+      renderCurrencyModal();
       moreActionSheet.classList.add('hidden');
       moreActionSheet.classList.remove('flex');
       currencyModal.classList.remove('hidden');
       currencyModal.classList.add('flex');
     });
 
-    quickEditCurrencyBtn.addEventListener('click', () => {
+    closeCurrencyModalBtn.addEventListener('click', () => {
       vibrate();
       currencyModal.classList.add('hidden');
       currencyModal.classList.remove('flex');
-      renderCurrencyManager();
-      manageCurrenciesModal.classList.remove('hidden');
-      manageCurrenciesModal.classList.add('flex');
-    });
-
-    menuManageCurrencies.addEventListener('click', () => {
-      vibrate();
-      moreActionSheet.classList.add('hidden');
-      moreActionSheet.classList.remove('flex');
-      renderCurrencyManager();
-      manageCurrenciesModal.classList.remove('hidden');
-      manageCurrenciesModal.classList.add('flex');
-    });
-
-    closeManageCurrenciesBtn.addEventListener('click', () => {
-      vibrate();
-      manageCurrenciesModal.classList.add('hidden');
-      manageCurrenciesModal.classList.remove('flex');
     });
 
     addCurrencyBtn.addEventListener('click', () => {
@@ -1681,24 +1647,8 @@
       newCurrencySymbolInput.value = "";
       newCurrencyNameInput.value = "";
       saveState();
-      renderCurrencyManager();
-      renderCurrencySelector();
+      renderCurrencyModal();
       renderDashboard();
-    });
-
-    currencyModal.addEventListener('click', (e) => {
-      const item = e.target.closest('.currency-item');
-      if (item) {
-        vibrate();
-        state.currency = item.getAttribute('data-value');
-        saveState();
-        renderDashboard();
-        if (!analyticsView.classList.contains('translate-x-full')) {
-          renderAnalyticsScreen();
-        }
-        currencyModal.classList.add('hidden');
-        currencyModal.classList.remove('flex');
-      }
     });
 
     /* -------------------------------------------------------------
